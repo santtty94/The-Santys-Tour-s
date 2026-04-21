@@ -2,7 +2,7 @@
 
 **Proyecto Intermodular ASIR — Curso 2025/2026**
 
-The Santy's Tours es una agencia de turismo de ocio y de aventura con sede en Barcelona. Ofrece rutas de senderismo, tours urbanos y escapadas de naturaleza para grupos y particulares.
+The Santy's Tours es una agencia de turismo de ocio y de aventura con sede en Barcelona. Ofrece experiencias únicas a turistas y locales: desde tours gastronómicos y clases de cocina hasta excursiones en barco, kayak y visitas culturales.
 
 Este repositorio recoge toda la infraestructura tecnológica del proyecto intermodular del ciclo formativo de **Administración de Sistemas Informáticos en Red (ASIR)**, aplicada a un emprendimiento real.
 
@@ -13,6 +13,23 @@ Este repositorio recoge toda la infraestructura tecnológica del proyecto interm
 - **Nombre:** Santiago
 - **Ciclo:** ASIR — Administración de Sistemas Informáticos en Red
 - **Curso:** 2025/2026
+
+---
+
+## 🎯 Experiencias que ofrecemos
+
+| Experiencia | Descripción |
+|-------------|-------------|
+| 🍢 Tapas Tour | Recorrido por los mejores bares de tapas de Barcelona |
+| 👨‍🍳 Cooking Class | Clase de cocina española con productos locales |
+| 🍹 Cocktail Class | Taller de coctelería con cócteles clásicos y de autor |
+| 👻 Ghost Tour | Tour nocturno por los lugares más misteriosos de Barcelona |
+| ⛰️ Montserrat Tour | Excursión al monasterio de Montserrat con cata de vinos |
+| 💃 Flamenco & Cena | Espectáculo de flamenco con cena incluida |
+| 🌅 Barco Atardecer | Paseo en barco al atardecer por la costa barcelonesa |
+| ⚓ Boat Food & Drink | Experiencia gastronómica a bordo de un barco |
+| 🚣 Kayak & Snorkel | Aventura acuática en kayak con snorkel en la costa |
+| 🚤 Speed Boat | Excursión en lancha rápida por el litoral |
 
 ---
 
