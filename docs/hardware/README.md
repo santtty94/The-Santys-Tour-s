@@ -3,172 +3,243 @@
 
 ---
 
-## 1. Introducción
+## 1. Análisis de necesidades de hardware
 
 The Santy's Tours es una agencia de turismo de ocio y aventura con sede física en Barcelona. El equipo está formado por 2-3 personas que gestionan las operaciones diarias desde la oficina y en campo.
 
 La infraestructura tecnológica de la empresa se divide en dos partes:
 
-- **Hardware local (oficina):** los equipos físicos que usa el equipo en el día a día.
+- **Hardware local (oficina):** los equipos físicos que usa el equipo día a día.
 - **Infraestructura en la nube (AWS):** donde corren el portal web, la app móvil y la base de datos.
 
-No existe servidor físico en la oficina. Esta decisión es deliberada: para una empresa en fase de arranque como The Santy's Tours, la nube ofrece menor coste inicial, mayor escalabilidad y cero mantenimiento de hardware de servidor.
+No existe servidor físico en la oficina. Para una empresa en fase de arranque como The Santy's Tours, la nube ofrece menor coste inicial, mayor escalabilidad y cero mantenimiento de hardware de servidor.
+
+### Resumen de equipos necesarios
+
+| Tipo de equipo | Cantidad | Función principal |
+|----------------|----------|-------------------|
+| Portátil de desarrollo web | 1 | Desarrollo y mantenimiento del portal web |
+| Portátil de desarrollo app/BBDD | 1 | Desarrollo de app móvil y gestión de base de datos |
+| Portátil de administración | 1 | Reservas, atención al cliente, facturación |
+| Smartphone de trabajo | 3 | Operativa en campo durante las experiencias |
+| Router fibra óptica | 1 | Conexión a internet y red local de oficina |
+| Impresora multifunción | 1 | Vouchers, tickets, documentación administrativa |
 
 ---
 
-## 2. Inventario de hardware de oficina
+## 2. Componentes de un equipo informático
 
-### 2.1 Portátil de desarrollo web — x1
+A continuación se describen los componentes principales que forman los equipos del sistema, tomando como referencia el Lenovo Legion 5.
 
-Equipo del responsable del portal web de The Santy's Tours.
+### 2.1 CPU — Procesador
 
-| Característica | Especificación |
-|----------------|----------------|
-| Modelo | Lenovo Legion 5 |
-| Procesador | Intel Core i9 (12ª generación) |
-| RAM | 32 GB DDR5 |
-| Almacenamiento | 1 TB SSD NVMe |
-| Pantalla | 15.6 pulgadas, 144 Hz |
-| Conectividad | Wi-Fi 6, Bluetooth 5.0, USB-C, HDMI |
-| Sistema Operativo | Windows 11 Pro |
-| Uso principal | Desarrollo y mantenimiento del portal web |
+| Campo | Detalle |
+|-------|---------|
+| Modelo | Intel Core i9-12900H |
+| Núcleos | 14 núcleos (6P + 8E) / 20 hilos |
+| Frecuencia base | 2,5 GHz |
+| Frecuencia turbo | hasta 5,0 GHz |
+| Caché | 24 MB L3 |
 
-**Justificación:** El desarrollo web moderno requiere ejecutar entornos locales (servidores de desarrollo, contenedores Docker, editores de código), navegar entre múltiples pestañas y herramientas simultáneamente, y compilar proyectos. Los 32 GB de RAM y el Core i9 garantizan que ninguna de estas tareas genere cuellos de botella. El SSD de 1 TB permite almacenar el entorno de desarrollo completo, assets multimedia y copias locales del repositorio.
+**Función:** El procesador es el cerebro del equipo. Ejecuta todas las instrucciones del software: compilar código, ejecutar emuladores, procesar datos y gestionar múltiples procesos simultáneos. Un Core i9 garantiza que tareas exigentes como compilar el portal web, ejecutar un emulador de móvil y tener el entorno de base de datos activo al mismo tiempo no generen cuellos de botella.
 
 ---
 
-### 2.2 Portátil de desarrollo de app y BBDD — x1
+### 2.2 Placa base
 
-Equipo del responsable de la aplicación móvil y la gestión de la base de datos.
+| Campo | Detalle |
+|-------|---------|
+| Formato | Integrada (portátil) — equivalente a micro-ATX |
+| Chipset | Intel HM670 |
+| Ranuras RAM | 2x SO-DIMM DDR5 |
+| Almacenamiento | 2x M.2 PCIe NVMe |
+| Puertos | USB-A 3.2, USB-C 3.2, HDMI 2.1, RJ-45 |
 
-| Característica | Especificación |
-|----------------|----------------|
-| Modelo | Lenovo Legion 5 |
-| Procesador | Intel Core i9 (12ª generación) |
-| RAM | 32 GB DDR5 |
-| Almacenamiento | 1 TB SSD NVMe |
-| Pantalla | 15.6 pulgadas, 144 Hz |
-| Conectividad | Wi-Fi 6, Bluetooth 5.0, USB-C, HDMI |
-| Sistema Operativo | Windows 11 Pro |
-| Uso principal | Desarrollo de app móvil y administración de base de datos |
-
-**Justificación:** El desarrollo de aplicaciones móviles exige ejecutar emuladores de Android e iOS simultáneamente, gestionar entornos de base de datos locales para pruebas y mantener el servidor de desarrollo de la API. Los 32 GB de RAM son esenciales para que el emulador, el IDE y el cliente de base de datos funcionen sin problemas en paralelo.
+**Función:** La placa base es el elemento que conecta y comunica todos los componentes del equipo. El chipset HM670 permite sacar el máximo rendimiento al Core i9 y soporta configuraciones de RAM de alta velocidad (DDR5), fundamentales para los entornos de desarrollo.
 
 ---
 
-### 2.3 Portátil de administración — x1 (pendiente de adquirir)
+### 2.3 Memoria RAM
 
-Equipo para el tercer miembro del equipo, encargado de tareas administrativas: gestión de reservas, atención al cliente, facturación y comunicaciones.
+| Campo | Detalle |
+|-------|---------|
+| Capacidad | 32 GB |
+| Tipo | DDR5 |
+| Frecuencia | 4.800 MHz |
+| Canales | Dual channel (2x 16 GB) |
 
-| Característica | Especificación recomendada |
-|----------------|---------------------------|
-| Modelo de referencia | Lenovo IdeaPad 5 / HP Pavilion 15 |
-| Procesador | Intel Core i5 12ª gen / AMD Ryzen 5 |
-| RAM | 16 GB DDR4 |
-| Almacenamiento | 512 GB SSD |
-| Pantalla | 15.6 pulgadas |
-| Conectividad | Wi-Fi 6, Bluetooth, USB-A, USB-C |
-| Sistema Operativo | Windows 11 Home |
-| Uso principal | Back-office, reservas, facturación, comunicaciones |
-
-**Justificación:** Las tareas administrativas no requieren la potencia de los equipos de desarrollo. Un equipo de gama media es suficiente para gestionar el panel de administración web, correo electrónico, herramientas ofimáticas y videollamadas. Se prioriza la relación calidad-precio y la duración de batería para mayor movilidad.
+**Función:** La RAM almacena temporalmente los datos que el procesador está usando en ese momento. 32 GB permiten tener activos simultáneamente: el IDE de desarrollo (VS Code), el servidor local, el navegador con múltiples pestañas, el emulador de móvil y el cliente de base de datos, sin que el sistema tenga que recurrir a la memoria virtual del disco.
 
 ---
 
-### 2.4 Smartphones de trabajo — x3
+### 2.4 Almacenamiento
 
-Herramienta imprescindible para la operativa en campo durante las experiencias turísticas.
+| Campo | Detalle |
+|-------|---------|
+| Tipo | SSD NVMe M.2 |
+| Capacidad | 1 TB |
+| Interfaz | PCIe Gen 4 |
+| Velocidad lectura | hasta 7.000 MB/s |
+| Velocidad escritura | hasta 6.500 MB/s |
 
-| Característica | Especificación |
-|----------------|----------------|
-| Modelo de referencia | iPhone 14 / Samsung Galaxy S23 |
-| RAM | 8 GB mínimo |
-| Almacenamiento | 128 GB |
-| Conectividad | 5G, Wi-Fi 6, NFC |
-| Cámara | 12 MP mínimo (fotos y vídeo para RRSS) |
-| Batería | 4.000 mAh mínimo |
-
-**Justificación:** Los guías usan el móvil para gestionar la app interna, hacer check-in de reservas en tiempo real, comunicarse con los clientes y capturar contenido fotográfico y de vídeo de las experiencias para redes sociales. El NFC permite validación de tickets y pagos en campo. La batería es crítica dado que las experiencias pueden durar varias horas fuera de la oficina.
+**Función:** El disco SSD almacena el sistema operativo, las aplicaciones y los proyectos de desarrollo. La velocidad NVMe PCIe Gen 4 reduce drásticamente los tiempos de carga del sistema y de compilación de proyectos respecto a un HDD tradicional.
 
 ---
 
-### 2.5 Router de fibra óptica — x1
+### 2.5 Tarjeta gráfica (GPU)
 
-| Característica | Especificación |
-|----------------|----------------|
-| Modelo de referencia | ASUS RT-AX88U |
-| Estándar Wi-Fi | Wi-Fi 6 (802.11ax) |
-| Velocidad contratada | 600 Mbps simétricos |
-| Puertos LAN | 4x Gigabit Ethernet |
-| Funcionalidades | QoS, VPN, firewall integrado |
+| Campo | Detalle |
+|-------|---------|
+| Modelo | NVIDIA GeForce RTX 3060 (6 GB VRAM) |
+| Uso principal | Aceleración gráfica para diseño web y edición multimedia |
 
-**Justificación:** Una conexión de fibra óptica simétrica es imprescindible para el equipo de desarrollo: subir código al repositorio, desplegar actualizaciones en AWS, realizar videollamadas y acceder al back-office en la nube sin latencia. El Wi-Fi 6 garantiza velocidad y estabilidad para los 3 portátiles y los móviles simultáneamente. El QoS permite priorizar el tráfico de trabajo sobre otros usos.
+**Función:** Aunque The Santy's Tours no es una empresa de videojuegos, la GPU tiene un papel importante: acelera el renderizado de interfaces en el navegador, permite editar fotografías y vídeos de las experiencias turísticas con fluidez y puede usarse para tareas de machine learning en el futuro si la empresa necesita análisis de datos.
 
 ---
 
-### 2.6 Impresora multifunción — x1
+### 2.6 Fuente de alimentación
 
-| Característica | Especificación |
-|----------------|----------------|
-| Modelo de referencia | Brother MFC-L3770CDW |
-| Tipo | Láser color multifunción |
-| Funciones | Impresión, escaneado, fotocopiado |
-| Conectividad | Wi-Fi, Ethernet, USB |
-| Velocidad | 24 ppm en negro, 24 ppm en color |
-| Formato | A4 |
+| Campo | Detalle |
+|-------|---------|
+| Tipo | Adaptador externo (portátil) |
+| Potencia | 230W |
+| Conector | USB-C / barrel connector |
 
-**Justificación:** Necesaria para imprimir vouchers y tickets de las experiencias, documentación administrativa, contratos y facturas para clientes que lo requieran. La conectividad Wi-Fi permite que cualquier miembro del equipo imprima directamente desde su portátil o móvil sin cables.
+**Función:** Proporciona la energía eléctrica necesaria para que todos los componentes funcionen de forma estable. Los 230W son necesarios para alimentar tanto el procesador i9 como la GPU RTX 3060 bajo carga máxima sin que el sistema se limite a sí mismo.
 
 ---
 
-## 3. Justificación: sin servidor físico en oficina
+## 3. Configuración de hardware propuesta
 
-The Santy's Tours no dispone de servidor físico en la oficina. Toda la infraestructura de servidor (portal web, app móvil, base de datos, almacenamiento de archivos) corre en **Amazon Web Services (AWS)**.
+### Equipo de desarrollo (x2) — Lenovo Legion 5
 
-| Razón | Explicación |
-|-------|-------------|
-| Coste inicial | Un servidor físico supone una inversión de 2.000-5.000€ que una empresa en arranque no necesita asumir |
-| Mantenimiento | La nube elimina la necesidad de gestionar hardware de servidor, actualizaciones de firmware y fallos de disco |
-| Escalabilidad | AWS permite escalar recursos en minutos si la demanda crece, sin comprar hardware nuevo |
-| Disponibilidad | AWS garantiza 99,99% de uptime, imposible de igualar con un servidor de oficina |
-| Seguridad | Copias de seguridad automáticas, cifrado y protección gestionados por AWS |
-| Movilidad | El equipo puede acceder al back-office y los sistemas desde cualquier lugar con internet |
+Configuración real de los equipos de desarrollo web y app/BBDD:
 
----
+| Componente | Especificación |
+|------------|----------------|
+| **Procesador** | Intel Core i9-12900H (14C/20T, hasta 5,0 GHz) |
+| **RAM** | 32 GB DDR5 4.800 MHz (dual channel) |
+| **Almacenamiento** | 1 TB SSD NVMe PCIe Gen 4 |
+| **Placa base** | Intel HM670, 2x M.2, 2x SO-DIMM |
+| **GPU** | NVIDIA GeForce RTX 3060 6 GB |
+| **Pantalla** | 15.6" IPS 144Hz FHD |
+| **Fuente de alimentación** | 230W |
+| **Conectividad** | Wi-Fi 6, Bluetooth 5.0, USB-C, USB-A 3.2, HDMI 2.1, RJ-45 |
+| **Sistema Operativo** | Windows 11 Pro |
 
-## 4. Resumen de inversión en hardware
-
-| Equipo | Cantidad | Coste estimado unitario | Total estimado |
-|--------|----------|------------------------|----------------|
-| Lenovo Legion 5 (Core i9, 32 GB, 1 TB) | 2 | 1.400 € | 2.800 € |
-| Portátil administración (gama media) | 1 | 700 € | 700 € |
-| Smartphones de trabajo | 3 | 600 € | 1.800 € |
-| Router ASUS RT-AX88U | 1 | 250 € | 250 € |
-| Impresora Brother MFC-L3770CDW | 1 | 350 € | 350 € |
-| **TOTAL** | | | **5.900 €** |
-
-> Los costes de infraestructura en la nube (AWS) se detallan en el módulo MPO (Fundamentos en la Nube).
+**Justificación:** Esta configuración está diseñada para soportar entornos de desarrollo exigentes. El Core i9 con 32 GB de RAM garantiza que los dos desarrolladores puedan trabajar con múltiples herramientas abiertas simultáneamente sin degradación del rendimiento. El SSD NVMe reduce los tiempos de compilación y el HDMI 2.1 permite conectar un monitor externo para aumentar la productividad.
 
 ---
 
-## 5. Diagrama de infraestructura de oficina
+### Equipo de administración (x1) — Gama media (por adquirir)
+
+| Componente | Especificación recomendada |
+|------------|---------------------------|
+| **Procesador** | Intel Core i5-1235U / AMD Ryzen 5 5500U |
+| **RAM** | 16 GB DDR4 3.200 MHz |
+| **Almacenamiento** | 512 GB SSD NVMe |
+| **Pantalla** | 15.6" FHD |
+| **Fuente de alimentación** | 65W |
+| **Conectividad** | Wi-Fi 6, USB-A, USB-C, HDMI |
+| **Sistema Operativo** | Windows 11 Home |
+
+**Justificación:** Las tareas administrativas (back-office, correo, videollamadas, ofimática) no requieren la potencia de los equipos de desarrollo. Un Core i5 con 16 GB es más que suficiente y permite optimizar el presupuesto destinando más recursos a los equipos de desarrollo.
+
+---
+
+## 4. Sistema de almacenamiento
+
+### 4.1 Almacenamiento local (equipos de oficina)
+
+Todos los equipos de The Santy's Tours usan discos **SSD NVMe** como almacenamiento principal.
+
+| Equipo | Tipo | Capacidad | Uso |
+|--------|------|-----------|-----|
+| Portátil desarrollo web | SSD NVMe PCIe Gen 4 | 1 TB | Entorno de desarrollo, repositorio, assets |
+| Portátil desarrollo app/BBDD | SSD NVMe PCIe Gen 4 | 1 TB | Entorno de desarrollo, emuladores, BBDD local |
+| Portátil administración | SSD NVMe | 512 GB | Sistema, ofimática, documentos |
+
+### 4.2 Comparativa SSD vs HDD
+
+| Característica | SSD NVMe | HDD mecánico |
+|----------------|----------|--------------|
+| Velocidad de lectura | hasta 7.000 MB/s | 80-160 MB/s |
+| Velocidad de escritura | hasta 6.500 MB/s | 80-160 MB/s |
+| Tiempo de acceso | < 0,1 ms | 5-10 ms |
+| Resistencia a golpes | Alta (sin partes móviles) | Baja (disco giratorio) |
+| Consumo energético | Bajo | Alto |
+| Coste por GB | Mayor | Menor |
+| Durabilidad | Alta | Media |
+
+**Decisión:** Se usa SSD NVMe en todos los equipos porque la velocidad de acceso impacta directamente en la productividad del equipo de desarrollo. El tiempo de arranque del sistema, la compilación de proyectos y la carga de herramientas de desarrollo se reducen drásticamente frente a un HDD.
+
+### 4.3 Almacenamiento en la nube (AWS)
+
+Los datos críticos del negocio no se almacenan en los discos locales sino en AWS:
+
+| Servicio AWS | Uso |
+|--------------|-----|
+| Amazon RDS | Base de datos de clientes y reservas |
+| Amazon S3 | Imágenes de experiencias, documentos, backups |
+| Amazon EBS | Disco del servidor web y de la app |
+
+Esto garantiza que si un portátil se estropea o es robado, ningún dato del negocio se pierde.
+
+---
+
+## 5. Mejora y evolución del hardware
+
+### 5.1 Situación actual (fase de arranque)
+
+La infraestructura actual está dimensionada para un equipo de 2-3 personas trabajando desde una oficina, con toda la infraestructura de servidor en la nube. Es una configuración eficiente y de bajo coste de mantenimiento para esta fase.
+
+### 5.2 Mejoras a corto plazo (0-12 meses)
+
+| Mejora | Justificación |
+|--------|---------------|
+| Monitor externo 27" para cada desarrollador | Aumenta la productividad al tener más espacio de pantalla para código y herramientas |
+| Switch de red gestionable | Permite segmentar la red de oficina (desarrollo / administración / invitados) |
+| SAI (Sistema de Alimentación Ininterrumpida) | Protege los equipos de cortes de luz que podrían corromper datos o interrumpir despliegues |
+| Disco externo SSD para backups locales | Complementa los backups en AWS con una copia local para recuperación rápida |
+
+### 5.3 Evolución a medio plazo (1-3 años)
+
+Si la empresa crece y contrata más personal, la infraestructura evolucionaría así:
+
+| Escenario | Hardware adicional necesario |
+|-----------|------------------------------|
+| 5-10 empleados | 2-7 portátiles adicionales según el rol, switch gestionable de 16 puertos, NAS para almacenamiento compartido interno |
+| Oficina con sala de reuniones | Pantalla de proyección, sistema de videoconferencia, AP Wi-Fi adicional |
+| Equipo de diseño/marketing | Equipos con GPU dedicada, tabletas gráficas (Wacom), monitores de alta resolución |
+| Mayor volumen de reservas | Escalar los recursos de AWS automáticamente, sin necesidad de nuevo hardware físico |
+
+### 5.4 Ventaja del modelo cloud-first
+
+La decisión de no tener servidor físico desde el inicio permite que el crecimiento de la empresa no dependa de comprar nuevo hardware de servidor. AWS escala automáticamente según la demanda: si en verano el portal web recibe 10 veces más reservas que en invierno, los recursos se ajustan solos sin intervención manual ni inversión en hardware adicional.
+
+---
+
+## 6. Diagrama de infraestructura de oficina
 
 ```
-                        INTERNET (Fibra 600 Mbps)
-                                |
-                         [Router Wi-Fi 6]
-                                |
-              ┌─────────────────┼─────────────────┐
-              |                 |                 |
-    [Portátil Web]    [Portátil App/BBDD]  [Portátil Admin]
-    Core i9 / 32GB     Core i9 / 32GB      Core i5 / 16GB
-              |                 |                 |
-              └─────────────────┴─────────────────┘
-                                |
-                        [Impresora Wi-Fi]
-                                |
-                    ════════════════════════
-                         NUBE (AWS)
-                    ════════════════════════
-                    Portal Web | App | BBDD
+                        INTERNET (Fibra 600 Mbps simétricos)
+                                     |
+                           [Router ASUS Wi-Fi 6]
+                                     |
+              ┌──────────────────────┼──────────────────────┐
+              |                      |                      |
+   [Portátil Desarrollo Web]  [Portátil App/BBDD]  [Portátil Admin]
+    Legion 5 — i9 / 32GB       Legion 5 — i9 / 32GB   i5 / 16GB
+    1TB SSD NVMe               1TB SSD NVMe            512GB SSD
+              |                      |                      |
+              └──────────────────────┴──────────────────────┘
+                                     |
+                           [Impresora Wi-Fi]
+                        [Smartphones x3 (Wi-Fi/5G)]
+
+                    ══════════════════════════════════
+                              NUBE — AWS
+                    ══════════════════════════════════
+                     Portal Web (EC2) | App (EC2)
+                     Base de Datos (RDS) | Archivos (S3)
 ```
