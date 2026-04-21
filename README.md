@@ -2,9 +2,9 @@
 
 **Proyecto Intermodular ASIR — Curso 2025/2026**
 
-The Santy's Tours es una agencia de turismo de aventura y ocio con sede en Barcelona. Ofrece rutas de senderismo, tours urbanos y escapadas de naturaleza para grupos y particulares.
+The Santy's Tours es una agencia de turismo de ocio y de aventura con sede en Barcelona. Ofrece rutas de senderismo, tours urbanos y escapadas de naturaleza para grupos y particulares.
 
-Este repositorio recoge toda la documentación técnica del proyecto intermodular del ciclo formativo de **Administración de Sistemas Informáticos en Red (ASIR)**.
+Este repositorio recoge toda la infraestructura tecnológica del proyecto intermodular del ciclo formativo de **Administración de Sistemas Informáticos en Red (ASIR)**, aplicada a un emprendimiento real.
 
 ---
 
@@ -49,4 +49,4 @@ The-Santys-Tour-s/
 
 ## 🏢 Sobre la empresa
 
-**The Santy's Tours** es una agencia ficticia creada como contexto del proyecto intermodular. Todos los datos, diseños e infraestructuras están pensados para dar soporte tecnológico a una empresa real de turismo de aventura.
+**The Santy's Tours** es una agencia de turismo de ocio y de aventura en proceso de desarrollo real. Toda la infraestructura tecnológica documentada en este repositorio está diseñada para dar soporte a sus operaciones: gestión de clientes, reservas, comunicaciones y servicios digitales.
