@@ -106,9 +106,9 @@ La elección de SSD NVMe frente a un HDD mecánico tradicional supone una mejora
 
 | Campo | Detalle |
 |-------|---------|
-| Modelo | NVIDIA GeForce RTX 3060 |
-| VRAM | 6 GB GDDR6 |
-| CUDA Cores | 3.840 |
+| Modelo | NVIDIA GeForce RTX 5070 |
+| VRAM | 8 GB GDDR6 |
+| CUDA Cores | 4,608 |
 | TGP | 80-115W |
 
 **Función dentro del sistema:**
