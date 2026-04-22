@@ -1,24 +1,17 @@
 # Componentes de un Equipo Informático
 ## The Santy's Tours — FHW
 
-
 ---
-
 
 ## 1. Introducción
 
-
 A continuación se describen los componentes principales de los equipos informáticos que forman parte de la infraestructura de The Santy's Tours, tomando como referencia el **Lenovo Legion 5** (equipos de desarrollo).
-
 
 Comprender cómo interactúan estos componentes es fundamental para entender por qué se ha elegido cada configuración y cómo se relacionan entre sí para garantizar el rendimiento que necesita la empresa.
 
-
 ---
 
-
 ## 2. CPU — Procesador (Unidad Central de Procesamiento)
-
 
 | Campo | Detalle |
 |-------|---------|
@@ -113,9 +106,9 @@ La elección de SSD NVMe frente a un HDD mecánico tradicional supone una mejora
 
 | Campo | Detalle |
 |-------|---------|
-| Modelo | NVIDIA GeForce RTX 5070 |
-| VRAM | 8 GB GDDR6 |
-| CUDA Cores | 4,608 |
+| Modelo | NVIDIA GeForce RTX 3060 |
+| VRAM | 6 GB GDDR6 |
+| CUDA Cores | 3.840 |
 | TGP | 80-115W |
 
 **Función dentro del sistema:**
