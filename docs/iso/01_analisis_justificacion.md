@@ -15,7 +15,7 @@ The Santy's Tours es una agencia de turismo de ocio y aventura con sede en Barce
 - Equipos cliente para los empleados y guías turísticos
 - Almacenamiento compartido en red local
 
-Este documento analiza las alternativas disponibles y justifica la elección de **Ubuntu Server 22.04 LTS** como sistema operativo principal del servidor.
+Este documento analiza las alternativas disponibles y justifica la elección de **Ubuntu Server 22.04 LTS** como sistema operativo principal del servidor, y **Windows 11 Pro** para los equipos cliente de administración.
 
 ---
 
@@ -38,13 +38,13 @@ Este documento analiza las alternativas disponibles y justifica la elección de 
 |-----------|-------------|
 | RNF-01 | Estabilidad: mínimo 99% de disponibilidad |
 | RNF-02 | Seguridad: actualizaciones de seguridad automáticas disponibles |
-| RNF-03 | Coste: preferiblemente software libre y sin coste de licencia |
-| RNF-04 | Soporte: LTS (Long Term Support) mínimo 5 años |
+| RNF-03 | Coste: optimizar el coste total de licencias |
+| RNF-04 | Soporte: LTS (Long Term Support) mínimo 5 años en servidor |
 | RNF-05 | Rendimiento: optimizado para entorno servidor (sin entorno gráfico) |
 
 ---
 
-## 3. Alternativas analizadas
+## 3. Alternativas analizadas para el servidor
 
 ### 3.1 Ubuntu Server 22.04 LTS ✅ ELEGIDO
 
@@ -112,7 +112,7 @@ Este documento analiza las alternativas disponibles y justifica la elección de 
 
 ---
 
-## 4. Tabla comparativa
+## 4. Tabla comparativa — Servidor
 
 | Criterio | Ubuntu Server 22.04 | Windows Server 2022 | Rocky Linux | Debian 12 |
 |----------|--------------------|--------------------|-------------|-----------|
@@ -126,7 +126,7 @@ Este documento analiza las alternativas disponibles y justifica la elección de 
 
 ---
 
-## 5. Decisión final y justificación
+## 5. Decisión final — Servidor
 
 **Sistema elegido: Ubuntu Server 22.04 LTS**
 
@@ -150,12 +150,22 @@ Ubuntu Server 22.04 LTS es la opción más adecuada para The Santy's Tours por l
 
 Para los equipos de administración de la agencia (oficina), se propone:
 
-**Ubuntu Desktop 22.04 LTS**
+**Windows 11 Pro** ✅ ELEGIDO
 
-- Interfaz gráfica GNOME, familiar e intuitiva
-- Misma base que el servidor → consistencia en la gestión
-- Sin coste de licencia
-- Compatible con las herramientas de gestión (navegador, cliente SSH, Samba)
+| Característica | Detalle |
+|---------------|---------|
+| Fabricante | Microsoft |
+| Versión | Windows 11 Pro |
+| Licencia | OEM incluida en los equipos de administración |
+| Soporte | Hasta octubre de 2031 |
+
+**Justificación:**
+
+- **Familiaridad del personal**: los empleados de oficina y guías turísticos no tienen perfil técnico. Windows 11 Pro ofrece la interfaz más familiar y reduce la curva de aprendizaje.
+- **Compatibilidad con herramientas de gestión**: Suite Microsoft Office, navegadores, clientes de correo y herramientas de gestión turística funcionan de forma nativa en Windows.
+- **Integración con Samba**: Windows 11 Pro accede de forma transparente a las carpetas compartidas del servidor Ubuntu mediante unidades de red Samba (SMB/CIFS).
+- **Administración remota del servidor**: el personal técnico puede gestionar el servidor Ubuntu desde Windows 11 Pro usando clientes SSH como Windows Terminal, PuTTY o MobaXterm.
+- **Sin coste adicional de licencia**: la licencia Windows 11 Pro viene incluida como OEM en los equipos de administración adquiridos.
 
 ---
 
