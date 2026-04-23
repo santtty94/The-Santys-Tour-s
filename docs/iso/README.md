@@ -29,7 +29,7 @@ docs/iso/
 ## 🎯 Objetivos del módulo
 
 - Analizar las necesidades del sistema operativo para The Santy's Tours
-- Justificar la elección de Ubuntu Server 22.04 LTS
+- Justificar la elección de Ubuntu Server 22.04 LTS para el servidor
 - Documentar el proceso de instalación en entorno virtualizado (VirtualBox)
 - Configurar usuarios, permisos y servicios básicos de red
 
@@ -40,12 +40,12 @@ docs/iso/
 | Rol | Sistema Operativo | Justificación |
 |-----|------------------|---------------|
 | Servidor principal | Ubuntu Server 22.04 LTS | Estable, seguro, sin entorno gráfico, ideal para producción |
-| Equipos de administración | Ubuntu Desktop 22.04 LTS | Compatibilidad con herramientas de gestión interna |
+| Equipos de administración | Windows 11 Pro | Familiaridad del personal de oficina, integración con herramientas de gestión |
 | Entorno de pruebas | VirtualBox 7.x sobre Lenovo Legion 5 (i9, 32 GB RAM) | Virtualización local para desarrollo y pruebas |
 
 ---
 
-## 👥 Usuarios configurados
+## 👥 Usuarios configurados en el servidor
 
 | Usuario | Rol | Permisos |
 |---------|-----|----------|
@@ -59,7 +59,7 @@ docs/iso/
 ## 🔧 Servicios configurados
 
 - **SSH** — Acceso remoto seguro al servidor (puerto 22)
-- **Samba** — Compartición de archivos en red local (puerto 445)
+- **Samba** — Compartición de archivos entre servidor Linux y clientes Windows 11 Pro (puerto 445)
 
 ---
 
