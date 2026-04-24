@@ -64,14 +64,8 @@ sudo timedatectl set-timezone Europe/Madrid
 timedatectl
 ```
 
-Salida esperada:
-```
-               Local time: Thu 2026-04-23 10:30:00 CEST
-           Universal time: Thu 2026-04-23 08:30:00 UTC
-                Time zone: Europe/Madrid (CEST, +0200)
-System clock synchronized: yes
-              NTP service: active
-```
+![Resultado de timedatectl mostrando Europe/Madrid CEST +0200](capturas/Captura_de_pantalla_11.png)
+*Captura 11 — timedatectl confirmando zona horaria Europe/Madrid (CEST, +0200)*
 
 ### 2.4 Localización del sistema
 
@@ -89,17 +83,6 @@ sudo apt install unattended-upgrades -y
 sudo dpkg-reconfigure --priority=low unattended-upgrades
 ```
 
-Verificar:
-```bash
-cat /etc/apt/apt.conf.d/20auto-upgrades
-```
-
-Contenido esperado:
-```
-APT::Periodic::Update-Package-Lists "1";
-APT::Periodic::Unattended-Upgrade "1";
-```
-
 ### 2.6 Firewall — UFW
 
 En AWS Academy la primera línea de defensa es el **Security Group**. UFW actúa como segunda capa dentro de la instancia:
@@ -112,6 +95,9 @@ sudo ufw allow samba
 sudo ufw enable
 sudo ufw status verbose
 ```
+
+![Resultado de ufw status verbose con puertos 22, 80 y 443 activos](capturas/Captura_de_pantalla_12.png)
+*Captura 12 — UFW activo con reglas SSH (22), HTTP (80) y HTTPS (443). Nota: el perfil Samba no se encontró en UFW; el puerto 445 está abierto a través del Security Group de AWS.*
 
 ### 2.7 Resumen de configuración del servidor
 
@@ -169,25 +155,46 @@ En AWS Academy el par de claves utilizado es **vockey** (par de claves por defec
 3. Guardar el archivo `labsuser.ppk` en `C:\Keys\` dentro de la VM Windows 11 Pro
 
 > **No es necesario usar PuTTYgen** — AWS Academy ya proporciona el archivo en formato .ppk listo para PuTTY.
->
-> *Nota para producción real: si se usa una cuenta AWS propia con clave .pem generada manualmente, sí será necesario convertirla con PuTTYgen (Load .pem → Save private key → .ppk).*
 
 #### 3.4.3 Configurar la sesión SSH en PuTTY
 
 1. Abrir **PuTTY**
 2. **Host Name**: IP pública del servidor AWS Academy
 3. **Port**: 22 / **Connection type**: SSH
+
+![PuTTY configurado con IP del servidor 100.31.58.43, puerto 22, tipo SSH](capturas/Captura_de_pantalla_06.png)
+*Captura 06 — PuTTY Session con IP pública 100.31.58.43, puerto 22, conexión SSH*
+
 4. Panel izquierdo → **Connection → SSH → Auth → Credentials**
 5. **Private key file for authentication** → **Browse** → seleccionar `C:\Keys\labsuser.ppk`
+
+![PuTTY Auth Credentials con labsuser.ppk seleccionado como clave privada](capturas/Captura_de_pantalla_07.png)
+*Captura 07 — PuTTY SSH → Auth → Credentials con labsuser.ppk cargado*
+
 6. Volver a **Session** → **Saved Sessions**: escribir `SantysTours-Server` → **Save**
 
 #### 3.4.4 Conectar al servidor
 
 1. Seleccionar sesión `SantysTours-Server` → **Open**
 2. Primer acceso: aviso de seguridad sobre la clave del host → **Accept**
+
+![PuTTY Security Alert — aviso de verificación de clave del host](capturas/Captura_de_pantalla_08.png)
+*Captura 08 — PuTTY Security Alert al conectar por primera vez, se acepta la clave del host*
+
 3. **login as:** `ubuntu`
-4. Conexión establecida con la clave .ppk sin contraseña
-5. Prompt: `ubuntu@santyserver:~$`
+4. Conexión establecida — se muestra el banner de The Santy's Tours
+
+![Sesión PuTTY conectada al servidor mostrando el banner y el prompt ubuntu@ip](capturas/Captura_de_pantalla_09.png)
+*Captura 09 — Sesión PuTTY activa: banner "The Santy's Tours — Servidor Interno" y bienvenida a Ubuntu 22.04.5 LTS*
+
+5. Verificar versión del sistema:
+
+```bash
+lsb_release -a
+```
+
+![lsb_release -a mostrando Ubuntu 22.04.5 LTS codename jammy](capturas/Captura_de_pantalla_10.png)
+*Captura 10 — lsb_release -a confirmando Ubuntu 22.04.5 LTS (jammy), sesión PuTTY activa*
 
 ### 3.5 Resumen de configuración del cliente
 
