@@ -38,7 +38,7 @@ The Santy's Tours utiliza una infraestructura mixta que separa claramente el rol
 
 > **Sobre el par de claves vockey:** En AWS Academy el par de claves `vockey` ya existe en el laboratorio y no es necesario crearlo. La clave privada se descarga directamente desde el panel del laboratorio en el formato necesario.
 
-![Configuración de la instancia: nombre SantysTours-Server, AMI Ubuntu 22.04 LTS y tipo t3.micro](capturas/Captura_de_pantalla_01_y_02.png)
+![Configuración de la instancia: nombre SantysTours-Server, AMI Ubuntu 22.04 LTS y tipo t3.micro](capturas/Captura%20de%20pantalla%2001%20y%2002.png)
 *Captura 01-02 — Pantalla Launch Instance con nombre, AMI Ubuntu Server 22.04 LTS y tipo t3.micro seleccionados*
 
 ### 2.3 Configuración del Security Group
@@ -52,7 +52,7 @@ Crear un nuevo Security Group con las siguientes reglas de entrada:
 | HTTPS | 443 | TCP | Anywhere (0.0.0.0/0) | Portal web seguro |
 | Custom TCP | 445 | TCP | Anywhere (0.0.0.0/0) | Samba (compartición de archivos) |
 
-![Security Group con las 4 reglas de entrada: SSH 22, HTTPS 443, HTTP 80, TCP 445](capturas/Captura_de_pantalla_03.png)
+![Security Group con las 4 reglas de entrada: SSH 22, HTTPS 443, HTTP 80, TCP 445](capturas/Captura%20de%20pantalla%2003.png)
 *Captura 03 — Security Group con reglas SSH (22), HTTPS (443), HTTP (80) y Samba/TCP (445)*
 
 ### 2.4 Lanzamiento y verificación
@@ -62,7 +62,7 @@ Crear un nuevo Security Group con las siguientes reglas de entrada:
 3. Esperar a que el estado cambie a **running** (1-2 minutos)
 4. Anotar la **IP pública** asignada por AWS Academy
 
-![Instancia SantysTours-Server en estado running con IP pública y detalle de la instancia](capturas/Captura_de_pantalla_04_y_05.png)
+![Instancia SantysTours-Server en estado running con IP pública y detalle de la instancia](capturas/Captura%20de%20pantalla%2004%20y%2005.png)
 *Captura 04-05 — Instancia SantysTours-Server en estado running, IP pública 100.31.58.43, tipo t3.micro, par de claves vockey*
 
 ### 2.5 Descarga de la clave para PuTTY
