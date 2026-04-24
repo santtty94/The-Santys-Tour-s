@@ -30,7 +30,7 @@ Conectarse al servidor por PuTTY y ejecutar:
 sudo systemctl status ssh
 ```
 
-![systemctl status ssh mostrando el servicio active running](capturas/Captura_de_pantalla_15.png)
+![systemctl status ssh mostrando el servicio active running](capturas/Captura%20de%20pantalla%2015.png)
 *Captura 15 — ssh.service active (running) — OpenBSD Secure Shell server activo desde el arranque de la instancia*
 
 > **Nota:** Samba (`smbd.service`) no aparece como instalado en esta captura — se configurará en el paso 3 de este documento.
