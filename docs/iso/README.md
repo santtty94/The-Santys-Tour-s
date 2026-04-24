@@ -20,7 +20,7 @@ Este módulo se ejecuta como **prueba piloto** previa al despliegue real del pro
 |-----------|--------------------------------|----------------------------------|
 | Servidor | **AWS Academy** (laboratorio para estudiantes) | AWS cuenta de producción |
 | Equipos cliente | **Windows 11 Pro en VirtualBox** (Lenovo Legion 5 i9, 32 GB RAM) | Equipos físicos Windows 11 Pro en la oficina |
-| Acceso remoto | **PuTTY** desde VM Windows en VirtualBox → AWS Academy | PuTTY desde equipos físicos → AWS producción |
+| Acceso remoto | **PuTTY** + clave `labsuser.ppk` (vockey AWS Academy) | PuTTY desde equipos físicos → AWS producción |
 
 > Todos los procedimientos documentados son directamente aplicables al entorno de producción real sin cambios técnicos, únicamente cambia la infraestructura sobre la que se ejecutan.
 
@@ -33,9 +33,9 @@ docs/iso/
 ├── README.md                        # Este archivo
 ├── 01_analisis_justificacion.md     # Análisis y justificación del SO elegido
 ├── 02_plan_implantacion.md          # Plan de implantación: AWS Academy + VirtualBox
-├── 03_configuracion_basica.md       # Configuración básica: hostname, red, PuTTY, zona horaria
+├── 03_configuracion_basica.md       # Config básica: hostname, red, PuTTY, vockey
 ├── 04_gestion_usuarios_permisos.md  # Gestión de usuarios y permisos en servidor y cliente
-└── 05_servicios_ssh_samba.md        # Servicios SSH (PuTTY) y Samba (unidades de red)
+└── 05_servicios_ssh_samba.md        # Servicios SSH (PuTTY + vockey) y Samba
 ```
 
 ---
@@ -43,9 +43,9 @@ docs/iso/
 ## 🎯 Objetivos del módulo
 
 - Justificar la elección de Ubuntu Server 22.04 LTS (servidor) y Windows 11 Pro (cliente)
-- Documentar el lanzamiento de la instancia EC2 t3.micro en AWS Academy
+- Documentar el lanzamiento de la instancia EC2 t3.micro en AWS Academy con par de claves **vockey**
 - Documentar la instalación de Windows 11 Pro en VirtualBox como equipo cliente
-- Configurar el acceso remoto SSH mediante PuTTY con clave .ppk
+- Configurar el acceso remoto SSH mediante **PuTTY** con clave `labsuser.ppk`
 - Configurar usuarios, permisos y servicios básicos (SSH y Samba)
 
 ---
@@ -55,7 +55,7 @@ docs/iso/
 | Rol | Sistema Operativo | Plataforma (prueba) | Plataforma (producción) |
 |-----|------------------|--------------------|-----------------------|
 | Servidor principal | Ubuntu Server 22.04 LTS | AWS Academy — EC2 t3.micro | AWS — EC2 t3.micro |
-| Equipos de administración | Windows 11 Pro | VirtualBox (Lenovo Legion 5) | Equipos físicos de oficina |
+| Equipos de administración | Windows 11 Pro | VirtualBox (Lenovo Legion 5 i9, 32 GB RAM) | Equipos físicos de oficina |
 
 ---
 
@@ -73,7 +73,7 @@ docs/iso/
 
 ## 🔧 Servicios configurados
 
-- **SSH** — Acceso remoto seguro al servidor mediante **PuTTY** desde Windows 11 Pro (puerto 22)
+- **SSH** — Acceso remoto seguro al servidor mediante **PuTTY** + `labsuser.ppk` (vockey) desde Windows 11 Pro (puerto 22)
 - **Samba** — Compartición de carpetas entre servidor Ubuntu y clientes Windows 11 Pro (puerto 445)
 
 ---
@@ -95,10 +95,11 @@ docs/iso/
 
 El acceso SSH desde Windows 11 Pro al servidor Ubuntu en AWS Academy se realiza mediante **PuTTY**:
 
-1. Clave AWS descargada en formato `.pem`
-2. Convertida a `.ppk` con **PuTTYgen**
-3. Sesión guardada en PuTTY: `SantysTours-Server` → IP pública AWS Academy
-4. Login: usuario `ubuntu` con autenticación por clave .ppk
+1. Par de claves **vockey** del laboratorio AWS Academy
+2. Descargar `labsuser.ppk` directamente desde el panel del laboratorio (**Download PPK**)
+3. Copiar `labsuser.ppk` a `C:\Keys\` en la VM Windows 11 Pro
+4. Sesión guardada en PuTTY: `SantysTours-Server` → IP pública AWS Academy
+5. Login: usuario `ubuntu` con autenticación por clave .ppk (sin contraseña)
 
 ---
 
