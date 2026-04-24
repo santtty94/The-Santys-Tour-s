@@ -22,12 +22,6 @@
 
 PuTTY permite al personal técnico de The Santy's Tours administrar el servidor Ubuntu en AWS Academy de forma remota y segura desde los equipos Windows 11 Pro, sin acceso físico al servidor.
 
-Casos de uso:
-- Administración del servidor desde los equipos de oficina
-- Despliegue y mantenimiento del portal web
-- Gestión de usuarios, permisos y servicios
-- Conexión desde la VM Windows (VirtualBox) hacia AWS Academy
-
 ### 2.2 Verificar SSH activo en el servidor
 
 Conectarse al servidor por PuTTY y ejecutar:
@@ -36,13 +30,10 @@ Conectarse al servidor por PuTTY y ejecutar:
 sudo systemctl status ssh
 ```
 
-Si no está activo:
+![systemctl status ssh mostrando el servicio active running](capturas/Captura_de_pantalla_15.png)
+*Captura 15 — ssh.service active (running) — OpenBSD Secure Shell server activo desde el arranque de la instancia*
 
-```bash
-sudo apt install openssh-server -y
-sudo systemctl enable ssh
-sudo systemctl start ssh
-```
+> **Nota:** Samba (`smbd.service`) no aparece como instalado en esta captura — se configurará en el paso 3 de este documento.
 
 ### 2.3 Hardening de la configuración SSH
 
@@ -100,7 +91,7 @@ sudo systemctl restart ssh
 
 #### Clave SSH del laboratorio AWS Academy
 
-En AWS Academy el par de claves es **vockey**. La clave privada se descarga directamente desde el panel del laboratorio en formato **.ppk** (listo para PuTTY, sin necesidad de conversión):
+En AWS Academy el par de claves es **vockey**. La clave privada se descarga directamente desde el panel del laboratorio en formato **.ppk** (listo para PuTTY):
 
 1. Panel AWS Academy → **Download PPK** → guardar como `labsuser.ppk` en `C:\Keys\`
 
@@ -112,19 +103,13 @@ En AWS Academy el par de claves es **vockey**. La clave privada se descarga dire
 4. Primer acceso → aviso de clave del host → **Accept**
 5. **login as:** `ubuntu`
 6. Conexión establecida con `labsuser.ppk` sin contraseña
-
-El banner de The Santy's Tours debe aparecer al conectarse.
+7. El banner de The Santy's Tours aparece al conectarse
 
 ### 2.7 Verificación del servicio SSH
 
 ```bash
-# Estado del servicio
 sudo systemctl status ssh
-
-# Puerto escuchando
 sudo ss -tlnp | grep :22
-
-# Últimos accesos registrados
 sudo journalctl -u ssh -n 20
 ```
 
@@ -134,11 +119,9 @@ sudo journalctl -u ssh -n 20
 
 ### 3.1 ¿Por qué Samba?
 
-Samba permite que los equipos **Windows 11 Pro** de la oficina accedan a las carpetas del servidor Ubuntu en AWS Academy como **unidades de red**, directamente desde el Explorador de archivos de Windows sin herramientas adicionales.
+Samba permite que los equipos **Windows 11 Pro** de la oficina accedan a las carpetas del servidor Ubuntu en AWS Academy como **unidades de red**, directamente desde el Explorador de archivos de Windows.
 
 ### 3.2 Instalación de Samba
-
-Conectarse por PuTTY al servidor y ejecutar:
 
 ```bash
 sudo apt install samba -y
@@ -209,23 +192,18 @@ sudo smbpasswd -a guia
 sudo smbpasswd -a readonly
 ```
 
-### 3.6 Verificar la configuración
+### 3.6 Verificar y arrancar Samba
 
 ```bash
 sudo testparm
-```
-
-### 3.7 Iniciar y habilitar Samba
-
-```bash
 sudo systemctl restart smbd nmbd
 sudo systemctl enable smbd nmbd
 sudo systemctl status smbd
 ```
 
-### 3.8 Firewall para Samba
+### 3.7 Firewall para Samba
 
-Verificar que el **Security Group** de AWS Academy tiene abierto el puerto 445 (TCP). Adicionalmente en UFW:
+El puerto 445 (TCP) está abierto a través del **Security Group** de AWS Academy configurado durante el lanzamiento de la instancia. Adicionalmente en UFW:
 
 ```bash
 sudo ufw allow samba
@@ -268,16 +246,9 @@ sudo ufw status | grep -i samba
 ## 6. Comandos de mantenimiento
 
 ```bash
-# Estado de todos los servicios
 sudo systemctl status ssh smbd nmbd
-
-# Ver usuarios Samba conectados
 sudo smbstatus
-
-# Logs SSH en tiempo real
 sudo journalctl -u ssh -f
-
-# Logs Samba
 sudo tail -f /var/log/samba/log.smbd
 ```
 
