@@ -11,19 +11,19 @@ The Santy's Tours utiliza una infraestructura mixta que separa claramente el rol
 
 | Componente | Plataforma | Sistema Operativo | Justificación |
 |-----------|-----------|------------------|---------------|
-| Servidor de producción | AWS EC2 | Ubuntu Server 22.04 LTS | Infraestructura cloud real del proyecto (coherente con módulo MPO) |
-| Equipos de administración | VirtualBox 7.x (Lenovo Legion 5) | Windows 11 Pro | Entorno de cliente simulado en local para demostrar configuración e integración |
+| Servidor de producción | AWS Academy (EC2 t3.micro) | Ubuntu Server 22.04 LTS | Infraestructura cloud del proyecto (coherente con módulo MPO) |
+| Equipos de administración | VirtualBox 7.x (Lenovo Legion 5) | Windows 11 Pro | Entorno de cliente simulado para demostrar configuración e integración |
 
 > **Nota:** El servidor no se instala manualmente. AWS lanza una instancia EC2 con Ubuntu Server 22.04 LTS preconfigurado. El proceso de implantación consiste en el lanzamiento, configuración y puesta en marcha de dicha instancia.
 
 ---
 
-## 2. PARTE A — Servidor: Lanzamiento de instancia EC2 en AWS
+## 2. PARTE A — Servidor: Lanzamiento de instancia EC2 en AWS Academy
 
-### 2.1 Acceso a la consola AWS
+### 2.1 Acceso a la consola AWS Academy
 
-1. Acceder a [https://console.aws.amazon.com](https://console.aws.amazon.com)
-2. Iniciar sesión con la cuenta del proyecto
+1. Acceder al laboratorio de AWS Academy e iniciar la sesión de laboratorio
+2. Clic en **AWS** para abrir la consola
 3. Navegar a **EC2** → **Instances** → **Launch Instance**
 
 ### 2.2 Configuración de la instancia
@@ -32,11 +32,11 @@ The Santy's Tours utiliza una infraestructura mixta que separa claramente el rol
 |-----------|-------|
 | Nombre | `SantysTours-Server` |
 | AMI | Ubuntu Server 22.04 LTS (64-bit x86) |
-| Tipo de instancia | **t3.micro** (1 vCPU, 1 GB RAM) — Free Tier elegible |
-| Par de claves | `santysTours-key` (generar nuevo, formato .pem) |
+| Tipo de instancia | **t3.micro** (1 vCPU, 1 GB RAM) |
+| Par de claves | **vockey** *(par de claves por defecto del laboratorio AWS Academy)* |
 | Almacenamiento | 20 GB SSD (gp3) |
 
-> El tipo **t3.micro** es el establecido en el módulo MPO para toda la infraestructura del proyecto.
+> **Sobre el par de claves vockey:** En AWS Academy el par de claves `vockey` ya existe en el laboratorio y no es necesario crearlo. La clave privada se descarga directamente desde el panel del laboratorio en el formato necesario.
 
 ### 2.3 Configuración del Security Group
 
@@ -44,7 +44,7 @@ Crear un nuevo Security Group con las siguientes reglas de entrada:
 
 | Tipo | Puerto | Protocolo | Origen | Uso |
 |------|--------|-----------|--------|-----|
-| SSH | 22 | TCP | Anywhere (0.0.0.0/0) | Administración remota |
+| SSH | 22 | TCP | Anywhere (0.0.0.0/0) | Administración remota con PuTTY |
 | HTTP | 80 | TCP | Anywhere (0.0.0.0/0) | Portal web |
 | HTTPS | 443 | TCP | Anywhere (0.0.0.0/0) | Portal web seguro |
 | Custom TCP | 445 | TCP | Anywhere (0.0.0.0/0) | Samba (compartición de archivos) |
@@ -54,27 +54,27 @@ Crear un nuevo Security Group con las siguientes reglas de entrada:
 1. Revisar el resumen de la configuración
 2. Clic en **Launch Instance**
 3. Esperar a que el estado cambie a **running** (1-2 minutos)
-4. Anotar la **IP pública** asignada por AWS — se usará en todos los pasos siguientes
+4. Anotar la **IP pública** asignada por AWS Academy — se usará en todos los pasos siguientes
 
-### 2.5 Par de claves SSH
+### 2.5 Descarga de la clave para PuTTY
 
-- Descargar el archivo `santysTours-key.pem` inmediatamente tras la creación
-- Guardar en lugar seguro — AWS no permite descargarlo de nuevo
-- En Windows, ajustar los permisos del archivo antes de usarlo:
+En AWS Academy, la clave privada **vockey** se descarga directamente desde el panel del laboratorio:
 
-```powershell
-icacls santysTours-key.pem /inheritance:r /grant:r "%USERNAME%:R"
-```
+1. En el panel del laboratorio AWS Academy → clic en **Download PEM** o **Download PPK**
+2. Para conectar con PuTTY desde Windows → seleccionar **Download PPK**
+3. Guardar el archivo `labsuser.ppk` en `C:\Keys\` dentro de la VM Windows 11 Pro
+4. **No es necesario usar PuTTYgen** para la conversión — AWS Academy ya proporciona el archivo en formato .ppk listo para usar
 
-### 2.6 Primera conexión SSH al servidor
+### 2.6 Primera conexión SSH al servidor con PuTTY
 
-Desde Windows Terminal en el equipo de administración:
+El acceso al servidor se realiza mediante **PuTTY** desde el equipo cliente Windows 11 Pro.
+El proceso completo de configuración de PuTTY está documentado en `03_configuracion_basica.md`.
 
-```powershell
-ssh -i santysTours-key.pem ubuntu@IP_PUBLICA
-```
-
-Verificar que el sistema está operativo:
+Pasos resumidos:
+1. Descargar `labsuser.ppk` desde el panel del laboratorio AWS Academy
+2. Abrir PuTTY → sesión guardada `SantysTours-Server` → **Open**
+3. Login: `ubuntu`
+4. Verificar que el sistema está operativo:
 
 ```bash
 lsb_release -a
@@ -98,13 +98,13 @@ ip a
 ### 3.2 Descarga de la ISO de Windows 11
 
 1. Acceder a [https://www.microsoft.com/software-download/windows11](https://www.microsoft.com/software-download/windows11)
-2. Descargar la **ISO de Windows 11** (seleccionar idioma Español)
+2. Descargar la **ISO de Windows 11** (idioma Español)
 3. Guardar el archivo .iso en el equipo host
 
 ### 3.3 Creación de la máquina virtual
 
 1. Abrir VirtualBox → **Nueva**
-2. Configurar con los siguientes parámetros:
+2. Configurar:
 
 | Parámetro | Valor |
 |-----------|-------|
@@ -114,31 +114,32 @@ ip a
 | RAM | 4096 MB |
 | Disco | 60 GB (VDI dinámico) |
 
-3. En **Configuración → Red**:
-   - Adaptador 1: **NAT** (para internet durante la instalación)
+3. **Configuración → Red** → Adaptador 1: **NAT**
 
 ### 3.4 Proceso de instalación de Windows 11 Pro
 
-1. Montar la ISO: Configuración → Almacenamiento → seleccionar la ISO
-2. Iniciar la VM
-3. En la pantalla de selección de edición → marcar **Windows 11 Pro**
-4. Tipo de instalación: **Personalizada** (instalación limpia)
-5. Seleccionar el disco completo para la instalación
-6. Completar el asistente de configuración inicial (idioma, cuenta, etc.)
+1. Montar la ISO → iniciar la VM
+2. Seleccionar edición: **Windows 11 Pro**
+3. Tipo de instalación: **Personalizada** (instalación limpia)
+4. Seleccionar el disco completo
+5. Completar el asistente de configuración inicial
 
 ### 3.5 Verificación post-instalación
 
 ```
 Inicio → Configuración → Sistema → Acerca de
 → Confirmar: Windows 11 Pro
+→ Renombrar equipo: SantysTours-Admin
 ```
 
 ### 3.6 Instalación de herramientas de administración
 
-Una vez instalado Windows 11 Pro, instalar en la VM:
+Una vez instalado Windows 11 Pro:
 
-- **Windows Terminal** — para conexiones SSH al servidor AWS
-- Copiar el archivo `santysTours-key.pem` dentro de la VM para las conexiones SSH
+1. Instalar **PuTTY** desde [https://www.putty.org](https://www.putty.org)
+2. Descargar `labsuser.ppk` desde el panel del laboratorio AWS Academy
+3. Copiar `labsuser.ppk` a `C:\Keys\` dentro de la VM
+4. Configurar la sesión PuTTY (ver `03_configuracion_basica.md`)
 
 ---
 
@@ -148,17 +149,19 @@ Una vez instalado Windows 11 Pro, instalar en la VM:
 ┌─────────────────────────────────────────────────────────────┐
 │              PLAN DE IMPLANTACIÓN ISO                        │
 ├────────────────────────┬────────────────────────────────────┤
-│  SERVIDOR (AWS)        │  CLIENTE (VirtualBox)              │
+│  SERVIDOR (AWS Academy)│  CLIENTE (VirtualBox)              │
 │                        │                                    │
-│  1. Consola AWS EC2    │  1. Descarga ISO Windows 11 Pro    │
+│  1. Consola AWS Academy│  1. Descarga ISO Windows 11 Pro    │
 │  2. Launch Instance    │  2. Crear VM en VirtualBox         │
 │     → AMI Ubuntu 22.04 │     → 4GB RAM, 60GB disco          │
 │     → t3.micro         │  3. Instalación Windows 11 Pro     │
-│     → Security Group   │     → Seleccionar edición Pro      │
-│       (22,80,443,445)  │     → Instalación limpia           │
-│  3. Obtener IP pública │  4. Verificar SO instalado         │
-│  4. Conectar por SSH   │  5. Instalar Windows Terminal      │
-│     desde Windows      │  6. Copiar clave .pem              │
+│     → vockey (clave    │     → Seleccionar edición Pro      │
+│       del laboratorio) │     → Instalación limpia           │
+│     → Security Group   │  4. Verificar SO + renombrar equipo│
+│       (22,80,443,445)  │  5. Instalar PuTTY                 │
+│  3. Descargar .ppk     │  6. Copiar labsuser.ppk            │
+│     desde panel lab    │  7. Configurar sesión PuTTY        │
+│  4. Conectar por PuTTY │                                    │
 └────────────────────────┴────────────────────────────────────┘
 ```
 
