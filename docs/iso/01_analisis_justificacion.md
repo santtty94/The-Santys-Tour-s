@@ -164,7 +164,7 @@ Para los equipos de administración de la agencia (oficina), se propone:
 - **Familiaridad del personal**: los empleados de oficina y guías turísticos no tienen perfil técnico. Windows 11 Pro ofrece la interfaz más familiar y reduce la curva de aprendizaje.
 - **Compatibilidad con herramientas de gestión**: Suite Microsoft Office, navegadores, clientes de correo y herramientas de gestión turística funcionan de forma nativa en Windows.
 - **Integración con Samba**: Windows 11 Pro accede de forma transparente a las carpetas compartidas del servidor Ubuntu mediante unidades de red Samba (SMB/CIFS).
-- **Administración remota del servidor**: el personal técnico puede gestionar el servidor Ubuntu desde Windows 11 Pro usando clientes SSH como Windows Terminal, PuTTY o MobaXterm.
+- **Administración remota del servidor**: el personal técnico gestiona el servidor Ubuntu desde Windows 11 Pro usando **PuTTY** con la clave `labsuser.ppk` (vockey de AWS Academy).
 - **Sin coste adicional de licencia**: la licencia Windows 11 Pro viene incluida como OEM en los equipos de administración adquiridos.
 
 ---
