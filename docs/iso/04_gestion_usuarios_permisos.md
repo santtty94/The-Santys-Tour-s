@@ -57,21 +57,23 @@ sudo adduser readonly
 Asignar grupos:
 
 ```bash
-# admin_tours — administrador del proyecto
 sudo usermod -aG sudo admin_tours
 sudo usermod -aG tours_admin admin_tours
-
-# empleado
 sudo usermod -aG tours_staff empleado
-
-# guia
 sudo usermod -aG tours_guias guia
-
-# readonly
 sudo usermod -aG tours_readonly readonly
 ```
 
-> **Nota:** El usuario `ubuntu` (por defecto de AWS Academy) tiene acceso `sudo` completo y actúa como administrador técnico del sistema. No es necesario crearlo.
+> **Nota:** El usuario `ubuntu` (por defecto de AWS Academy) tiene acceso `sudo` completo. No es necesario crearlo.
+
+Verificar grupos asignados:
+
+```bash
+groups empleado && groups guia
+```
+
+![groups empleado y groups guia mostrando tours_staff y tours_guias](capturas/Captura_de_pantalla_14.png)
+*Captura 14 — Verificación de grupos: empleado pertenece a tours_staff, guia pertenece a tours_guias*
 
 ### 2.4 Estructura de directorios del servidor
 
@@ -121,20 +123,16 @@ sudo chmod 755 /srv/santysTours/publico
 ls -la /srv/santysTours/
 ```
 
+![ls -la /srv/santysTours/ mostrando las 5 carpetas con sus permisos](capturas/Captura_de_pantalla_13.png)
+*Captura 13 — Estructura de carpetas /srv/santysTours/ con permisos aplicados (admin, documentos, publico, rutas, tours)*
+
+> **Nota técnica:** Durante la configuración inicial el usuario `admin_tours` aún no había sido creado, por lo que algunos comandos `chown` mostraron "invalid user". Los permisos de acceso (chmod) sí se aplicaron correctamente. Una vez creado `admin_tours`, los propietarios se reasignaron.
+
 Verificar ACL:
 
 ```bash
 getfacl /srv/santysTours/tours
 getfacl /srv/santysTours/rutas
-```
-
-Verificar grupos:
-
-```bash
-groups admin_tours
-groups empleado
-groups guia
-groups readonly
 ```
 
 ### 2.7 Política de contraseñas
@@ -175,8 +173,6 @@ sudo chage -M 180 admin_tours
 ---
 
 ## 3. PARTE B — Usuarios en Windows 11 Pro (VirtualBox)
-
-En el entorno de prueba, la VM Windows 11 Pro simula un equipo de administración de la empresa.
 
 ### 3.1 Usuarios locales de Windows
 
