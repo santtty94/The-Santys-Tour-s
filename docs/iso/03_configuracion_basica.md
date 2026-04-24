@@ -50,7 +50,7 @@ sudo timedatectl set-timezone Europe/Madrid
 timedatectl
 ```
 
-![Resultado de timedatectl mostrando Europe/Madrid CEST +0200](capturas/Captura de pantalla 11.png)
+![Resultado de timedatectl mostrando Europe/Madrid CEST +0200](capturas/Captura%20de%20pantalla%2011.png)
 *Captura 11 — timedatectl confirmando zona horaria Europe/Madrid (CEST, +0200)*
 
 ### 2.4 Localización del sistema
@@ -79,7 +79,7 @@ sudo ufw enable
 sudo ufw status verbose
 ```
 
-![Resultado de ufw status verbose con puertos 22, 80 y 443 activos](capturas/Captura de pantalla 12.png)
+![Resultado de ufw status verbose con puertos 22, 80 y 443 activos](capturas/Captura%20de%20pantalla%2012.png)
 *Captura 12 — UFW activo con reglas SSH (22), HTTP (80) y HTTPS (443). El puerto 445 (Samba) está abierto a través del Security Group de AWS.*
 
 ### 2.7 Resumen de configuración del servidor
@@ -130,12 +130,12 @@ En AWS Academy el par de claves es **vockey**. Descargar directamente desde el p
 1. Abrir **PuTTY**
 2. **Host Name**: IP pública AWS Academy / **Port**: 22 / **SSH**
 
-![PuTTY configurado con IP del servidor 100.31.58.43, puerto 22, tipo SSH](capturas/Captura de pantalla 06.png)
+![PuTTY configurado con IP del servidor 100.31.58.43, puerto 22, tipo SSH](capturas/Captura%20de%20pantalla%2006.png)
 *Captura 06 — PuTTY Session con IP pública 100.31.58.43, puerto 22, conexión SSH*
 
 3. **Connection → SSH → Auth → Credentials** → seleccionar `labsuser.ppk`
 
-![PuTTY Auth Credentials con labsuser.ppk seleccionado](capturas/Captura de pantalla 07.png)
+![PuTTY Auth Credentials con labsuser.ppk seleccionado](capturas/Captura%20de%20pantalla%2007.png)
 *Captura 07 — PuTTY SSH → Auth → Credentials con labsuser.ppk cargado*
 
 4. **Session** → **Saved Sessions**: `SantysTours-Server` → **Save**
@@ -145,12 +145,12 @@ En AWS Academy el par de claves es **vockey**. Descargar directamente desde el p
 1. Sesión `SantysTours-Server` → **Open**
 2. Aviso de clave del host → **Accept**
 
-![PuTTY Security Alert al conectar por primera vez](capturas/Captura de pantalla 08.png)
+![PuTTY Security Alert al conectar por primera vez](capturas/Captura%20de%20pantalla%2008.png)
 *Captura 08 — PuTTY Security Alert, se acepta la clave del host*
 
 3. **login as:** `ubuntu` → conexión establecida con banner de The Santy's Tours
 
-![Sesión PuTTY conectada mostrando el banner y el prompt ubuntu@ip](capturas/Captura de pantalla 09.png)
+![Sesión PuTTY conectada mostrando el banner y el prompt ubuntu@ip](capturas/Captura%20de%20pantalla%2009.png)
 *Captura 09 — Sesión PuTTY activa: banner "The Santy's Tours — Servidor Interno" y Ubuntu 22.04.5 LTS*
 
 4. Verificar versión:
@@ -158,7 +158,7 @@ En AWS Academy el par de claves es **vockey**. Descargar directamente desde el p
 lsb_release -a
 ```
 
-![lsb_release -a mostrando Ubuntu 22.04.5 LTS codename jammy](capturas/Captura de pantalla 10.png)
+![lsb_release -a mostrando Ubuntu 22.04.5 LTS codename jammy](capturas/Captura%20de%20pantalla%2010.png)
 *Captura 10 — lsb_release -a confirmando Ubuntu 22.04.5 LTS (jammy)*
 
 ### 3.5 Resumen de configuración del cliente
