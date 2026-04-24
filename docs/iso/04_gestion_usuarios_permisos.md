@@ -72,7 +72,7 @@ Verificar grupos asignados:
 groups empleado && groups guia
 ```
 
-![groups empleado y groups guia mostrando tours_staff y tours_guias](capturas/Captura_de_pantalla_14.png)
+![groups empleado y groups guia mostrando tours_staff y tours_guias](capturas/Captura%20de%20pantalla%2014.png)
 *Captura 14 — Verificación de grupos: empleado pertenece a tours_staff, guia pertenece a tours_guias*
 
 ### 2.4 Estructura de directorios del servidor
@@ -123,7 +123,7 @@ sudo chmod 755 /srv/santysTours/publico
 ls -la /srv/santysTours/
 ```
 
-![ls -la /srv/santysTours/ mostrando las 5 carpetas con sus permisos](capturas/Captura_de_pantalla_13.png)
+![ls -la /srv/santysTours/ mostrando las 5 carpetas con sus permisos](capturas/Captura%20de%20pantalla%2013.png)
 *Captura 13 — Estructura de carpetas /srv/santysTours/ con permisos aplicados (admin, documentos, publico, rutas, tours)*
 
 > **Nota técnica:** Durante la configuración inicial el usuario `admin_tours` aún no había sido creado, por lo que algunos comandos `chown` mostraron "invalid user". Los permisos de acceso (chmod) sí se aplicaron correctamente. Una vez creado `admin_tours`, los propietarios se reasignaron.
