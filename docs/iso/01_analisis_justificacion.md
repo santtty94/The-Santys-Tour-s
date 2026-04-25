@@ -151,24 +151,117 @@ Ubuntu Server 22.04 LTS es la opción más adecuada para The Santy's Tours por l
 
 ## 6. Sistema operativo para equipos cliente
 
-Para los equipos de administración de la agencia (oficina), se propone:
+Los equipos de administración de The Santy's Tours requieren un sistema operativo que permita al personal trabajar con las aplicaciones de oficina habituales, acceder al servidor mediante SSH (PuTTY), conectar unidades de red Samba y ser fácilmente administrado por el equipo técnico.
 
-**Windows 11 Pro** ✅ ELEGIDO
+---
 
-| Característica | Detalle |
-|---------------|---------|
-| Fabricante | Microsoft |
-| Versión | Windows 11 Pro |
-| Licencia | OEM incluida en los equipos de administración |
-| Soporte | Hasta octubre de 2031 |
+### 6.1 Alternativas analizadas para los equipos cliente
 
-**Justificación:**
+#### Windows 11 Pro ✅ ELEGIDO
 
-- **Familiaridad del personal**: los empleados de oficina y guías turísticos no tienen perfil técnico. Windows 11 Pro ofrece la interfaz más familiar y reduce la curva de aprendizaje.
-- **Compatibilidad con herramientas de gestión**: Suite Microsoft Office, navegadores, clientes de correo y herramientas de gestión turística funcionan de forma nativa en Windows.
-- **Integración con Samba**: Windows 11 Pro accede de forma transparente a las carpetas compartidas del servidor Ubuntu mediante unidades de red Samba (SMB/CIFS).
-- **Administración remota del servidor**: el personal técnico gestiona el servidor Ubuntu desde los equipos Windows 11 Pro de la oficina usando **PuTTY** con la clave privada descargada de AWS.
-- **Sin coste adicional de licencia**: la licencia Windows 11 Pro viene incluida como OEM en los equipos de administración adquiridos.
+**Fabricante:** Microsoft
+**Versión:** Windows 11 Pro
+**Licencia:** OEM incluida en los equipos adquiridos
+**Soporte:** Hasta octubre de 2031
+
+**Ventajas:**
+- Interfaz familiar para todo el personal sin perfil técnico
+- Amplia compatibilidad con software de gestión empresarial y Suite Microsoft Office
+- Integración nativa con unidades de red Samba (SMB/CIFS) sin software adicional
+- PuTTY disponible y ampliamente documentado para Windows
+- Herramientas de administración avanzadas: `gpedit.msc`, políticas de grupo, Active Directory
+- Soporte técnico profesional amplio
+
+**Inconvenientes:**
+- Coste de licencia (incluido en el precio del equipo OEM)
+- Mayor consumo de recursos que sistemas ligeros
+- Actualizaciones forzadas pueden interrumpir el trabajo
+
+---
+
+#### macOS Sequoia
+
+**Fabricante:** Apple
+**Licencia:** Incluida con hardware Apple
+
+**Ventajas:**
+- Interfaz intuitiva y estable
+- Integración nativa con ecosistema Apple
+- Terminal Unix nativo para SSH
+
+**Inconvenientes:**
+- Requiere hardware Apple — coste significativamente superior
+- Menor compatibilidad con software empresarial específico del sector turístico
+- Sin soporte nativo para unidades de red Samba (requiere configuración adicional)
+- No es el entorno habitual del personal de oficina en España
+
+---
+
+#### Ubuntu Desktop 22.04 LTS
+
+**Fabricante:** Canonical
+**Licencia:** Gratuito (open source)
+
+**Ventajas:**
+- Sin coste de licencia
+- SSH y Samba integrados de forma nativa
+- Muy ligero en recursos
+
+**Inconvenientes:**
+- Curva de aprendizaje elevada para personal sin perfil técnico
+- Incompatibilidad con algunos programas de gestión turística específicos de Windows
+- Requiere formación del personal — coste indirecto significativo
+- La instalación y mantenimiento requiere mayor dedicación técnica
+
+---
+
+#### Windows 10 Pro
+
+**Fabricante:** Microsoft
+**Soporte:** Fin de soporte en **octubre de 2025**
+
+**Ventajas:**
+- Ampliamente conocido por todo el personal
+- Menor requisitos de hardware que Windows 11
+
+**Inconvenientes:**
+- Fin de soporte oficial en octubre de 2025 — no apto para un proyecto nuevo
+- Sin las mejoras de seguridad de Windows 11 (TPM 2.0, Secure Boot)
+
+---
+
+### 6.2 Tabla comparativa — Equipos cliente
+
+| Criterio | Windows 11 Pro | macOS Sequoia | Ubuntu Desktop 22.04 | Windows 10 Pro |
+|----------|---------------|---------------|---------------------|----------------|
+| Coste licencia | OEM incluido | Hardware caro | Gratuito | OEM incluido |
+| Soporte hasta | 2031 | Indefinido | 2027 | ~~2025~~ ❌ |
+| Familiaridad del personal | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Integración Samba | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Herramientas administración | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| Compatibilidad software | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Vigencia del soporte | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ❌ |
+| **Puntuación total** | **34/35** | **25/35** | **25/35** | **28/35** |
+
+---
+
+### 6.3 Decisión final — Equipos cliente
+
+**Sistema elegido: Windows 11 Pro**
+
+Windows 11 Pro es la opción más adecuada para los equipos de administración de The Santy's Tours por los siguientes motivos:
+
+1. **Familiaridad del personal**: los empleados y guías turísticos no tienen perfil técnico. Windows 11 Pro es el entorno que conocen y en el que son productivos desde el primer día, sin formación adicional.
+
+2. **Integración nativa con la infraestructura**: Windows 11 Pro se integra de forma transparente con las unidades de red Samba del servidor Ubuntu — los empleados ven las carpetas compartidas como unidades locales en el Explorador de archivos.
+
+3. **PuTTY para administración remota**: el personal técnico gestiona el servidor Ubuntu desde Windows 11 Pro usando PuTTY, herramienta estándar y ampliamente documentada en entornos Windows.
+
+4. **Herramientas de administración avanzadas**: Windows 11 Pro incluye `gpedit.msc` (editor de directivas de grupo) que permite aplicar restricciones de seguridad específicas por usuario — fundamental para limitar los permisos de las cuentas de empleados.
+
+5. **Vigencia del soporte**: soporte oficial hasta octubre de 2031, suficiente para el ciclo de vida del proyecto.
+
+6. **Sin coste adicional**: la licencia Windows 11 Pro viene incluida como OEM en los equipos adquiridos — no supone coste adicional frente a otras opciones de pago.
 
 
 ---
