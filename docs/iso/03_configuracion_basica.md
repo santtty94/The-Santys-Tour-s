@@ -5,19 +5,26 @@
 
 ---
 
-## 1. Contexto del entorno de prueba
-
-| Componente | Entorno de prueba | Entorno real (producción futura) |
-|-----------|------------------|----------------------------------|
-| Servidor | AWS Academy (laboratorio para estudiantes) | AWS cuenta de producción |
-| Equipos cliente | Windows 11 Pro en VirtualBox | Equipos físicos Windows 11 Pro |
-| Acceso remoto | PuTTY desde VM Windows → AWS Academy | PuTTY desde equipos físicos → AWS producción |
+> **Nota sobre las evidencias:** Los procedimientos descritos corresponden al entorno de producción real. Las capturas aportadas fueron tomadas en un entorno de laboratorio (AWS Academy + VirtualBox) como evidencia práctica del proyecto intermodular ASIR.
 
 ---
 
-## 2. PARTE A — Servidor Ubuntu Server en AWS Academy
+## 1. Alcance de este documento
 
-> Todos los comandos se ejecutan conectado al servidor mediante **PuTTY**. Ver sección 3 para la configuración de PuTTY.
+Este documento cubre la configuración básica de todos los sistemas de la infraestructura de The Santy's Tours:
+
+| Sistema | Plataforma | Configuración aplicada |
+|---------|-----------|----------------------|
+| Servidor Ubuntu Server 22.04 LTS | AWS EC2 | Hostname, zona horaria, locale, actualizaciones, firewall |
+| Base de datos MySQL 8.0 | AWS RDS | Conexión, usuario de aplicación, seguridad |
+| Almacenamiento | AWS S3 | Estructura, permisos, AWS CLI, CORS |
+| Equipos cliente | Windows 11 Pro (equipos físicos) | Nombre, zona horaria, red, PuTTY, Samba |
+
+---
+
+## 2. PARTE A — Servidor Ubuntu Server en AWS EC2
+
+> Todos los comandos se ejecutan conectado al servidor mediante **PuTTY** con la clave privada descargada de AWS. Ver sección 5 para la configuración de PuTTY.
 
 ### 2.1 Nombre del equipo (hostname)
 
@@ -31,13 +38,19 @@ Verificar en `/etc/hosts`:
 cat /etc/hosts
 ```
 
-### 2.2 Red en AWS Academy
+Debe contener:
+```
+127.0.0.1   localhost
+127.0.1.1   santyserver
+```
 
-En AWS Academy la red es gestionada por AWS. No se configura Netplan ni IP estática manualmente.
+### 2.2 Red en AWS EC2
 
+En AWS EC2, la red es gestionada completamente por AWS. No se configura Netplan ni IP estática manualmente. AWS asigna:
 - **IP privada** fija dentro de la VPC
-- **IP pública** dinámica (usar Elastic IP en producción)
+- **IP pública** (asignar una **Elastic IP** en producción para tener IP fija)
 
+Verificar la red:
 ```bash
 ip a
 curl -s http://169.254.169.254/latest/meta-data/public-ipv4
@@ -58,6 +71,7 @@ timedatectl
 ```bash
 sudo locale-gen es_ES.UTF-8
 sudo update-locale LANG=es_ES.UTF-8
+locale -a | grep es_ES
 ```
 
 ### 2.5 Actualizaciones del sistema
@@ -70,6 +84,8 @@ sudo dpkg-reconfigure --priority=low unattended-upgrades
 
 ### 2.6 Firewall — UFW
 
+La primera línea de defensa es el **Security Group** de AWS. UFW actúa como segunda capa dentro de la instancia:
+
 ```bash
 sudo ufw allow ssh
 sudo ufw allow 80/tcp
@@ -80,78 +96,54 @@ sudo ufw status verbose
 ```
 
 ![Resultado de ufw status verbose con puertos 22, 80 y 443 activos](capturas/Captura%20de%20pantalla%2012.png)
-*Captura 12 — UFW activo con reglas SSH (22), HTTP (80) y HTTPS (443). El puerto 445 (Samba) está abierto a través del Security Group de AWS.*
+*Captura 12 — UFW activo con reglas SSH (22), HTTP (80) y HTTPS (443). El puerto 445 (Samba) se gestiona a través del Security Group de AWS.*
 
 ### 2.7 Resumen de configuración del servidor
 
 | Parámetro | Valor |
 |-----------|-------|
 | Hostname | `santyserver` |
-| IP privada (VPC) | Asignada automáticamente por AWS |
-| IP pública | Asignada por AWS Academy (dinámica) |
+| IP pública | Elastic IP fija (producción) |
 | Zona horaria | `Europe/Madrid (CEST)` |
 | Locale | `es_ES.UTF-8` |
 | Firewall | Security Group AWS + UFW activo |
-| Actualizaciones automáticas | Activadas (`unattended-upgrades`) |
-
----
-
+| Actualizaciones automáticas | Activadas |
 
 ---
 
 ## 3. PARTE B — Configuración de Amazon RDS MySQL
 
-Amazon RDS no requiere configuración de sistema operativo — AWS lo gestiona completamente. La configuración básica consiste en establecer los parámetros de conexión, seguridad y rendimiento de la base de datos.
+Amazon RDS no requiere configuración de sistema operativo — AWS lo gestiona completamente.
 
 ### 3.1 Verificar conectividad EC2 → RDS
 
-Desde la sesión PuTTY conectada al servidor EC2, verificar que la instancia EC2 puede alcanzar la base de datos RDS:
+Desde la sesión PuTTY conectada al servidor EC2:
 
 ```bash
-# Instalar cliente MySQL
 sudo apt install mysql-client -y
-
-# Probar conexión al endpoint RDS
 mysql -h santytoursdb.xxxxxxxxx.us-east-1.rds.amazonaws.com -u admin -p
 ```
 
-Si la conexión es exitosa, aparecerá el prompt de MySQL:
+Conexión exitosa:
 ```
 Welcome to the MySQL monitor...
 mysql>
 ```
 
-### 3.2 Crear la base de datos y usuario de aplicación
-
-Una vez conectado al servidor MySQL de RDS:
+### 3.2 Crear base de datos y usuario de aplicación
 
 ```sql
--- Crear base de datos del proyecto
 CREATE DATABASE santytoursdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Crear usuario específico para la aplicación (principio de mínimo privilegio)
 CREATE USER 'santyapp'@'%' IDENTIFIED BY 'ContraseñaSegura123!';
 
--- Otorgar permisos solo sobre la base de datos del proyecto
 GRANT SELECT, INSERT, UPDATE, DELETE ON santytoursdb.* TO 'santyapp'@'%';
 
 FLUSH PRIVILEGES;
 SHOW DATABASES;
 ```
 
-### 3.3 Configuración del Security Group de RDS
-
-Verificar que el Security Group de RDS permite la conexión desde EC2:
-
-| Tipo | Puerto | Origen |
-|------|--------|--------|
-| MySQL/Aurora | 3306/TCP | Security Group de la instancia EC2 |
-
-> **Importante:** El puerto 3306 de RDS **no debe estar abierto a internet** (0.0.0.0/0). Solo debe aceptar conexiones desde el Security Group de la EC2.
-
-### 3.4 Configurar conexión en el backend Node.js (EC2)
-
-En la instancia EC2, configurar las variables de entorno de conexión a RDS:
+### 3.3 Configurar conexión en el backend Node.js
 
 ```bash
 sudo nano /etc/environment
@@ -166,17 +158,16 @@ DB_USER="santyapp"
 DB_PASS="ContraseñaSegura123!"
 ```
 
-### 3.5 Resumen de configuración RDS
+### 3.4 Resumen de configuración RDS
 
 | Parámetro | Valor |
 |-----------|-------|
 | Endpoint | `santytoursdb.xxxxxxxxx.us-east-1.rds.amazonaws.com` |
 | Puerto | 3306 |
-| Motor | MySQL 8.0 |
 | Base de datos | `santytoursdb` |
-| Usuario aplicación | `santyapp` |
+| Usuario app | `santyapp` |
 | Acceso | Solo desde Security Group EC2 |
-| Backups automáticos | Activados por AWS (7 días de retención) |
+| Backups | Automáticos por AWS (7 días) |
 
 ---
 
@@ -184,150 +175,123 @@ DB_PASS="ContraseñaSegura123!"
 
 ### 4.1 Estructura de carpetas en el bucket
 
-Una vez creado el bucket `santystours-media`, organizar el contenido con la siguiente estructura:
-
 ```
 santystours-media/
-├── tours/          → Imágenes de los tours (JPG, WebP)
-├── guias/          → Fotografías de perfil de los guías
-├── docs/           → PDFs de confirmación de reservas
-└── static/         → Archivos estáticos del portal (CSS, JS, fuentes)
+├── tours/     → Imágenes de los tours
+├── guias/     → Fotografías de perfil de los guías
+├── docs/      → PDFs de confirmación de reservas
+└── static/    → Archivos estáticos del portal (CSS, JS, fuentes)
 ```
-
-Crear las carpetas desde la consola AWS S3 → bucket → **Create folder**.
 
 ### 4.2 Subir archivos desde EC2 usando AWS CLI
 
-Instalar AWS CLI en la instancia EC2:
-
 ```bash
 sudo apt install awscli -y
-aws --version
-```
-
-Configurar credenciales (en AWS Academy usar las credenciales del laboratorio):
-
-```bash
 aws configure
-# AWS Access Key ID: [de las credenciales del laboratorio]
-# AWS Secret Access Key: [de las credenciales del laboratorio]
-# Default region: us-east-1
-# Default output format: json
-```
-
-Subir un archivo de prueba:
-
-```bash
-echo "test" > test.txt
+# Introducir credenciales AWS, región us-east-1
 aws s3 cp test.txt s3://santystours-media/static/test.txt
 aws s3 ls s3://santystours-media/
 ```
 
 ### 4.3 Configurar CORS en S3
 
-Para que el portal web pueda acceder a los archivos desde el navegador, configurar CORS en el bucket:
-
-1. S3 → bucket `santystours-media` → **Permissions** → **Cross-origin resource sharing (CORS)**
-2. Añadir la siguiente configuración:
+En S3 → bucket `santystours-media` → **Permissions** → **CORS**:
 
 ```json
 [
   {
     "AllowedHeaders": ["*"],
     "AllowedMethods": ["GET"],
-    "AllowedOrigins": ["*"],
+    "AllowedOrigins": ["https://thesantystours.com"],
     "ExposeHeaders": []
   }
 ]
 ```
 
-### 4.4 Resumen de configuración S3
-
-| Parámetro | Valor |
-|-----------|-------|
-| Nombre del bucket | `santystours-media` |
-| Región | `us-east-1` |
-| Acceso público | Activado para archivos estáticos |
-| CORS | Configurado para GET desde cualquier origen |
-| Estructura | tours/, guias/, docs/, static/ |
-
 ---
 
-## 5. PARTE D — Cliente Windows 11 Pro en VirtualBox
+## 5. PARTE D — Equipos cliente Windows 11 Pro
+
+Los equipos de administración de la oficina son máquinas físicas con Windows 11 Pro instalado desde USB booteable (ver `02_plan_implantacion.md`).
 
 ### 5.1 Nombre del equipo
 
 1. Inicio → Configuración → Sistema → Acerca de → **Cambiar nombre de este equipo**
-2. Establecer: `SantysTours-Admin` → Reiniciar
+2. Establecer: `SantysTours-Admin-01` (numeración por equipo)
+3. Reiniciar para aplicar el cambio
 
 ### 5.2 Zona horaria
 
-Inicio → Configuración → Hora e idioma → Fecha y hora → **(UTC+01:00) Madrid**
+1. Inicio → Configuración → Hora e idioma → Fecha y hora
+2. Zona horaria: **(UTC+01:00) Madrid**
+3. Activar **Establecer la hora automáticamente**
 
 ### 5.3 Red
 
-La VM usa adaptador **NAT** de VirtualBox. No requiere configuración adicional.
+Conectar el equipo a la red de la oficina. Verificar conectividad con el servidor:
+```powershell
+ping IP_PUBLICA_SERVIDOR
+```
 
 ### 5.4 Instalación y configuración de PuTTY
 
-#### 3.4.1 Descarga e instalación
+PuTTY es el cliente SSH para administrar el servidor Ubuntu desde los equipos Windows de la oficina.
 
-Descargar desde [https://www.putty.org](https://www.putty.org) → instalar.
+#### 5.4.1 Descarga e instalación
 
-#### 3.4.2 Obtener la clave privada desde AWS Academy
+1. Descargar desde [https://www.putty.org](https://www.putty.org) → **putty-64bit-X.XX-installer.msi**
+2. Ejecutar el instalador
 
-En AWS Academy el par de claves es **vockey**. Descargar directamente desde el panel del laboratorio:
+#### 5.4.2 Clave privada para autenticación
 
-- Panel AWS Academy → **Download PPK** → guardar `labsuser.ppk` en `C:\Keys\`
+La clave privada en formato `.ppk` se descarga desde la consola AWS al crear la instancia EC2. Guardarla en `C:\Keys\` en cada equipo de administración.
 
-> No es necesario usar PuTTYgen — AWS Academy proporciona el .ppk directamente.
-
-#### 3.4.3 Configurar la sesión SSH en PuTTY
+#### 5.4.3 Configurar sesión SSH en PuTTY
 
 1. Abrir **PuTTY**
-2. **Host Name**: IP pública AWS Academy / **Port**: 22 / **SSH**
+2. **Host Name**: IP pública del servidor AWS (o dominio Route 53)
+3. **Port**: 22 / **Connection type**: SSH
 
-![PuTTY configurado con IP del servidor 100.31.58.43, puerto 22, tipo SSH](capturas/Captura%20de%20pantalla%2006.png)
-*Captura 06 — PuTTY Session con IP pública 100.31.58.43, puerto 22, conexión SSH*
+![PuTTY configurado con IP del servidor, puerto 22, tipo SSH](capturas/Captura%20de%20pantalla%2006.png)
+*Captura 06 — PuTTY Session con IP pública, puerto 22, conexión SSH*
 
-3. **Connection → SSH → Auth → Credentials** → seleccionar `labsuser.ppk`
+4. **Connection → SSH → Auth → Credentials** → seleccionar `C:\Keys\labsuser.ppk`
 
-![PuTTY Auth Credentials con labsuser.ppk seleccionado](capturas/Captura%20de%20pantalla%2007.png)
-*Captura 07 — PuTTY SSH → Auth → Credentials con labsuser.ppk cargado*
+![PuTTY Auth Credentials con clave privada cargada](capturas/Captura%20de%20pantalla%2007.png)
+*Captura 07 — PuTTY SSH → Auth → Credentials con clave privada cargada*
 
-4. **Session** → **Saved Sessions**: `SantysTours-Server` → **Save**
+5. Volver a **Session** → **Saved Sessions**: `SantysTours-Server` → **Save**
 
-#### 3.4.4 Conectar al servidor
+#### 5.4.4 Conectar al servidor
 
-1. Sesión `SantysTours-Server` → **Open**
-2. Aviso de clave del host → **Accept**
+1. Seleccionar sesión → **Open**
+2. Primer acceso: aviso de clave del host → **Accept**
 
 ![PuTTY Security Alert al conectar por primera vez](capturas/Captura%20de%20pantalla%2008.png)
 *Captura 08 — PuTTY Security Alert, se acepta la clave del host*
 
-3. **login as:** `ubuntu` → conexión establecida con banner de The Santy's Tours
+3. **login as:** `ubuntu`
+4. El banner de The Santy's Tours aparece al conectarse
 
-![Sesión PuTTY conectada mostrando el banner y el prompt ubuntu@ip](capturas/Captura%20de%20pantalla%2009.png)
-*Captura 09 — Sesión PuTTY activa: banner "The Santy's Tours — Servidor Interno" y Ubuntu 22.04.5 LTS*
+![Sesión PuTTY activa con banner de The Santy's Tours](capturas/Captura%20de%20pantalla%2009.png)
+*Captura 09 — Sesión PuTTY activa: banner "The Santy's Tours — Servidor Interno" y bienvenida Ubuntu 22.04.5 LTS*
 
-4. Verificar versión:
 ```bash
 lsb_release -a
 ```
 
-![lsb_release -a mostrando Ubuntu 22.04.5 LTS codename jammy](capturas/Captura%20de%20pantalla%2010.png)
+![lsb_release -a mostrando Ubuntu 22.04.5 LTS](capturas/Captura%20de%20pantalla%2010.png)
 *Captura 10 — lsb_release -a confirmando Ubuntu 22.04.5 LTS (jammy)*
 
 ### 5.5 Resumen de configuración del cliente
 
 | Parámetro | Valor |
 |-----------|-------|
-| Nombre del equipo | `SantysTours-Admin` |
+| Nombre del equipo | `SantysTours-Admin-01` |
 | Zona horaria | `(UTC+01:00) Madrid` |
-| Red | NAT (VirtualBox) → AWS Academy |
-| Clave SSH | `labsuser.ppk` (vockey de AWS Academy) |
-| Cliente SSH | PuTTY — sesión `SantysTours-Server` |
-| Acceso Samba | `\\IP_PUBLICA` desde Explorador de Windows |
+| Red | Ethernet/WiFi de la oficina |
+| Cliente SSH | PuTTY con clave privada AWS |
+| Acceso Samba | `\\IP_SERVIDOR` desde el Explorador de Windows |
 
 ---
 
