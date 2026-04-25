@@ -12,20 +12,11 @@ Este módulo documenta el diseño, justificación e implantación de todos los s
 
 ---
 
-## ⚠️ Contexto del entorno de prueba
+## 📌 Nota sobre las evidencias
 
-Este módulo se ejecuta como **prueba piloto** previa al despliegue real del proyecto. El objetivo es demostrar los conocimientos técnicos y validar el funcionamiento del sistema antes de ejecutarlo en producción.
+Los procedimientos descritos en este módulo corresponden al **entorno de producción real** del proyecto. Las capturas de pantalla y evidencias prácticas aportadas fueron realizadas en un **entorno de laboratorio** (AWS Academy + VirtualBox) como parte del proyecto intermodular ASIR 2025/2026, con el objetivo de demostrar los conocimientos técnicos antes del despliegue real.
 
-| Componente | Entorno de prueba (este módulo) | Entorno real (producción futura) |
-|-----------|--------------------------------|----------------------------------|
-| Servidor EC2 | **AWS Academy** (laboratorio para estudiantes) | AWS cuenta de producción |
-| Base de datos RDS | **AWS Academy** — db.t3.micro MySQL 8.0 | AWS RDS producción con Multi-AZ |
-| Almacenamiento S3 | **AWS Academy** — bucket santystours-media | AWS S3 producción |
-| ALB / CloudFront / Route 53 | Documentados, no configurados en lab | Configurados en producción |
-| Equipos cliente | **Windows 11 Pro en VirtualBox** (Lenovo Legion 5 i9, 32 GB RAM) | Equipos físicos Windows 11 Pro en la oficina |
-| Acceso remoto | **PuTTY** + clave `labsuser.ppk` (vockey AWS Academy) | PuTTY desde equipos físicos → AWS producción |
-
-> Todos los procedimientos documentados son directamente aplicables al entorno de producción real sin cambios técnicos, únicamente cambia la infraestructura sobre la que se ejecutan.
+Los comandos, configuraciones y procedimientos son **idénticos** en producción.
 
 ---
 
@@ -35,23 +26,23 @@ Este módulo se ejecuta como **prueba piloto** previa al despliegue real del pro
 docs/iso/
 ├── README.md                        # Este archivo
 ├── 01_analisis_justificacion.md     # Análisis y justificación de todos los sistemas
-├── 02_plan_implantacion.md          # Plan completo: EC2, RDS, S3, ALB, CloudFront, Route 53, VirtualBox
-├── 03_configuracion_basica.md       # Config básica: EC2 (Ubuntu), RDS (MySQL), S3, cliente Windows
-├── 04_gestion_usuarios_permisos.md  # Gestión de usuarios y permisos en servidor y cliente
-└── 05_servicios_ssh_samba.md        # Servicios SSH (PuTTY + vockey) y Samba
+├── 02_plan_implantacion.md          # Plan completo: EC2, RDS, S3, ALB, CloudFront, Route 53, Windows
+├── 03_configuracion_basica.md       # Config básica: Ubuntu Server, RDS MySQL, S3, Windows 11 Pro
+├── 04_gestion_usuarios_permisos.md  # Gestión de usuarios y permisos en servidor y clientes
+└── 05_servicios_ssh_samba.md        # Servicios SSH y Samba
 ```
 
 ---
 
 ## 🎯 Objetivos del módulo
 
-- Justificar la elección de todos los sistemas operativos y servicios de la arquitectura MPO
-- Documentar el lanzamiento de **EC2 t3.micro** con Ubuntu Server 22.04 LTS en AWS Academy
-- Documentar el lanzamiento y configuración básica de **RDS MySQL 8.0**
-- Documentar la creación y configuración del bucket **S3** para almacenamiento multimedia
-- Documentar ALB, CloudFront y Route 53 (servicios gestionados, configurables en producción)
-- Documentar la instalación de **Windows 11 Pro** en VirtualBox como equipo cliente
-- Configurar acceso remoto SSH mediante **PuTTY** con clave `labsuser.ppk`
+- Justificar la elección de todos los sistemas y servicios de la arquitectura MPO
+- Documentar el despliegue de **EC2** con Ubuntu Server 22.04 LTS en AWS
+- Documentar el lanzamiento y configuración de **RDS MySQL 8.0**
+- Documentar la creación y configuración del bucket **S3**
+- Documentar ALB, CloudFront y Route 53 como servicios gestionados AWS
+- Documentar la instalación de **Windows 11 Pro** en equipos físicos desde USB booteable
+- Configurar acceso remoto SSH mediante **PuTTY** con clave privada AWS
 - Configurar usuarios, permisos y servicios básicos (SSH y Samba)
 
 ---
@@ -63,10 +54,10 @@ docs/iso/
 | Servidor de aplicación | EC2 t3.micro | Ubuntu Server 22.04 LTS | ✅ Instalación + configuración + servicios |
 | Base de datos | RDS MySQL 8.0 | Gestionado por AWS | ✅ Lanzamiento + conexión + usuario app |
 | Almacenamiento | S3 (santystours-media) | Servicio sin servidor | ✅ Bucket + permisos + estructura + CLI |
-| CDN | CloudFront | Servicio sin servidor | ✅ Documentado (producción) |
-| Balanceo de carga | ALB | Servicio sin servidor | ✅ Documentado (producción) |
-| DNS | Route 53 | Servicio sin servidor | ✅ Documentado (producción) |
-| Equipos de oficina | — | Windows 11 Pro | ✅ Instalación VirtualBox + PuTTY + Samba |
+| CDN | CloudFront | Servicio sin servidor | ✅ Configuración documentada |
+| Balanceo de carga | ALB | Servicio sin servidor | ✅ Configuración documentada |
+| DNS | Route 53 | Servicio sin servidor | ✅ Configuración documentada |
+| Equipos de oficina | — | Windows 11 Pro | ✅ Instalación física + PuTTY + Samba |
 
 ---
 
@@ -74,7 +65,7 @@ docs/iso/
 
 | Usuario | Rol | Permisos |
 |---------|-----|----------|
-| `ubuntu` | Usuario por defecto AWS (admin técnico) | `sudo` completo |
+| `ubuntu` | Usuario por defecto AWS | `sudo` completo |
 | `admin_tours` | Administrador del sistema | `sudo` completo |
 | `empleado` | Empleado de oficina | Lectura/escritura en carpetas de trabajo |
 | `guia` | Guía turístico | Solo lectura en rutas |
@@ -85,7 +76,7 @@ docs/iso/
 
 ## 🔧 Servicios configurados
 
-- **SSH** — Acceso remoto seguro al servidor mediante **PuTTY** + `labsuser.ppk` (vockey) desde Windows 11 Pro (puerto 22)
+- **SSH** — Acceso remoto seguro al servidor mediante **PuTTY** con clave privada AWS (puerto 22)
 - **Samba** — Compartición de carpetas entre servidor Ubuntu y clientes Windows 11 Pro (puerto 445)
 - **MySQL** — Conexión desde EC2 al endpoint RDS (puerto 3306, solo red interna VPC)
 - **AWS CLI** — Gestión del bucket S3 desde la instancia EC2
@@ -107,11 +98,10 @@ docs/iso/
 
 ## 🔐 Acceso remoto al servidor
 
-1. Par de claves **vockey** del laboratorio AWS Academy
-2. Descargar `labsuser.ppk` desde el panel del laboratorio (**Download PPK**)
-3. Copiar `labsuser.ppk` a `C:\Keys\` en la VM Windows 11 Pro
-4. Sesión guardada en PuTTY: `SantysTours-Server` → IP pública AWS Academy
-5. Login: usuario `ubuntu` con autenticación por clave .ppk
+1. Descargar la clave privada desde la consola AWS (**Download PPK** para PuTTY)
+2. Guardar la clave en el equipo de administración Windows 11 Pro
+3. Configurar sesión PuTTY: IP pública o dominio Route 53 del servidor EC2
+4. Login: usuario `ubuntu` con autenticación por clave privada
 
 ---
 
