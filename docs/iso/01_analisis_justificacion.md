@@ -169,4 +169,28 @@ Para los equipos de administración de la agencia (oficina), se propone:
 
 ---
 
+## 7. Infraestructura completa — Coherencia con el módulo MPO
+
+El módulo ISO cubre los sistemas operativos y la configuración de **todos los componentes** de la arquitectura definida en el módulo MPO (Fundamentos de Computación en la Nube). La siguiente tabla resume la infraestructura completa y su tratamiento en este módulo:
+
+| Componente | Servicio AWS | SO / Gestión | Rol en el proyecto | Cobertura ISO |
+|-----------|-------------|-------------|-------------------|---------------|
+| Servidor de aplicación | EC2 t3.micro | **Ubuntu Server 22.04 LTS** (administrado por nosotros) | Ejecuta la API REST Node.js y el backend | ✅ Instalación, configuración, usuarios, SSH, Samba |
+| Base de datos | RDS MySQL 8.0 (db.t3.micro) | **Gestionado por AWS** (sin acceso al SO) | Almacena usuarios, tours, reservas, pagos | ✅ Lanzamiento, conexión desde EC2, usuario de app |
+| Almacenamiento multimedia | S3 (santystours-media) | **Servicio sin servidor** | Imágenes de tours, PDFs, archivos estáticos | ✅ Creación bucket, permisos, estructura, AWS CLI |
+| Distribución de contenido | CloudFront | **Servicio sin servidor** | CDN — sirve archivos estáticos con baja latencia | ✅ Documentado (configurable en producción) |
+| Balanceo de carga | Application Load Balancer | **Servicio sin servidor** | Distribuye tráfico entre instancias EC2 | ✅ Documentado (configurable en producción) |
+| DNS | Route 53 | **Servicio sin servidor** | Resuelve el dominio thesantystours.com | ✅ Documentado (configurable en producción) |
+| Equipos de administración | — | **Windows 11 Pro** (administrado por nosotros) | Acceso remoto al servidor y uso diario del personal | ✅ Instalación VirtualBox, PuTTY, Samba |
+
+### Decisiones de diseño coherentes con MPO
+
+- **EC2 + Ubuntu Server 22.04 LTS**: Es el único componente con sistema operativo que administramos directamente. El resto de servicios AWS son gestionados — AWS se encarga de su SO, parches y mantenimiento.
+- **RDS en lugar de MySQL en EC2**: Seguimos la arquitectura MPO que separa la capa de aplicación (EC2) de la capa de datos (RDS), mejorando la seguridad, escalabilidad y disponibilidad.
+- **S3 para almacenamiento**: Los archivos multimedia no se almacenan en el disco de la EC2, sino en S3, lo que permite escalar el almacenamiento independientemente del servidor.
+- **ALB + CloudFront + Route 53**: En el entorno de prueba AWS Academy estos servicios no se configuran (se accede directamente por IP pública de la EC2). En producción real formarán parte de la arquitectura completa.
+
+
+---
+
 *Documento elaborado para el Proyecto Intermodular ASIR 2025/2026 — The Santy's Tours*
