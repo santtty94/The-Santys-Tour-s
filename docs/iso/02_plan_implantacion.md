@@ -90,12 +90,13 @@ ip a
 
 ### 3.1 Especificaciones de los equipos de oficina
 
-| Componente | Especificación mínima |
-|-----------|----------------------|
-| CPU | Intel Core i5 de 8ª generación o superior (64-bit, TPM 2.0) |
-| RAM | 8 GB |
-| Almacenamiento | 256 GB SSD |
-| Red | Ethernet o WiFi |
+| Componente | Especificación |
+|-----------|---------------|
+| Modelo | Lenovo Legion 5 |
+| CPU | Intel Core i9 (64-bit, TPM 2.0) |
+| RAM | 32 GB |
+| Almacenamiento | SSD NVMe |
+| Red | Ethernet / WiFi |
 | SO a instalar | Windows 11 Pro |
 
 ### 3.2 Preparación del medio de instalación (USB booteable)
