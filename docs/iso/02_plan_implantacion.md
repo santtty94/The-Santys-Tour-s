@@ -5,26 +5,32 @@
 
 ---
 
-## 1. Arquitectura de implantación
-
-The Santy's Tours utiliza una infraestructura mixta que separa claramente el rol del servidor y de los clientes:
-
-| Componente | Plataforma | Sistema Operativo | Justificación |
-|-----------|-----------|------------------|---------------|
-| Servidor de producción | AWS Academy (EC2 t3.micro) | Ubuntu Server 22.04 LTS | Infraestructura cloud del proyecto (coherente con módulo MPO) |
-| Equipos de administración | VirtualBox 7.x (Lenovo Legion 5) | Windows 11 Pro | Entorno de cliente simulado para demostrar configuración e integración |
-
-> **Nota:** El servidor no se instala manualmente. AWS lanza una instancia EC2 con Ubuntu Server 22.04 LTS preconfigurado. El proceso de implantación consiste en el lanzamiento, configuración y puesta en marcha de dicha instancia.
+> **Nota sobre las evidencias:** Los procedimientos descritos en este documento corresponden al entorno de producción real. Las capturas aportadas fueron tomadas en un entorno de laboratorio (AWS Academy + VirtualBox) como evidencia práctica del proyecto intermodular ASIR.
 
 ---
 
-## 2. PARTE A — Servidor: Lanzamiento de instancia EC2 en AWS Academy
+## 1. Arquitectura de implantación
 
-### 2.1 Acceso a la consola AWS Academy
+The Santy's Tours despliega una infraestructura mixta en AWS con equipos físicos Windows 11 Pro en la oficina:
 
-1. Acceder al laboratorio de AWS Academy e iniciar la sesión de laboratorio
-2. Clic en **AWS** para abrir la consola
-3. Navegar a **EC2** → **Instances** → **Launch Instance**
+| Componente | Plataforma | Sistema Operativo | Justificación |
+|-----------|-----------|------------------|---------------|
+| Servidor de aplicación | AWS EC2 t3.micro | Ubuntu Server 22.04 LTS | Infraestructura cloud del proyecto (coherente con módulo MPO) |
+| Base de datos | AWS RDS db.t3.micro | MySQL 8.0 gestionado por AWS | Separación de capas, backups automáticos, alta disponibilidad |
+| Almacenamiento multimedia | AWS S3 | Servicio sin servidor | Escalado independiente, coste por uso |
+| CDN / DNS / Balanceo | CloudFront + Route 53 + ALB | Servicios gestionados AWS | Alta disponibilidad y baja latencia global |
+| Equipos de administración | Equipos físicos de oficina | Windows 11 Pro | Familiaridad del personal, integración con Samba y PuTTY |
+
+> **Nota:** El servidor EC2 no se instala manualmente — AWS lanza la instancia con Ubuntu Server 22.04 LTS preconfigurado. La implantación consiste en el lanzamiento, configuración y puesta en marcha de los servicios.
+
+---
+
+## 2. PARTE A — Servidor: Lanzamiento de instancia EC2 en AWS
+
+### 2.1 Acceso a la consola AWS
+
+1. Acceder a [https://console.aws.amazon.com](https://console.aws.amazon.com) con la cuenta del proyecto
+2. Navegar a **EC2** → **Instances** → **Launch Instance**
 
 ### 2.2 Configuración de la instancia
 
@@ -33,57 +39,50 @@ The Santy's Tours utiliza una infraestructura mixta que separa claramente el rol
 | Nombre | `SantysTours-Server` |
 | AMI | Ubuntu Server 22.04 LTS (64-bit x86) |
 | Tipo de instancia | **t3.micro** (1 vCPU, 1 GB RAM) |
-| Par de claves | **vockey** *(par de claves por defecto del laboratorio AWS Academy)* |
+| Par de claves | Crear nuevo par de claves → descargar `.pem` / `.ppk` |
 | Almacenamiento | 20 GB SSD (gp3) |
-
-> **Sobre el par de claves vockey:** En AWS Academy el par de claves `vockey` ya existe en el laboratorio y no es necesario crearlo. La clave privada se descarga directamente desde el panel del laboratorio en el formato necesario.
 
 ![Configuración de la instancia: nombre SantysTours-Server, AMI Ubuntu 22.04 LTS y tipo t3.micro](capturas/Captura%20de%20pantalla%2001%20y%2002.png)
 *Captura 01-02 — Pantalla Launch Instance con nombre, AMI Ubuntu Server 22.04 LTS y tipo t3.micro seleccionados*
 
 ### 2.3 Configuración del Security Group
 
-Crear un nuevo Security Group con las siguientes reglas de entrada:
-
 | Tipo | Puerto | Protocolo | Origen | Uso |
 |------|--------|-----------|--------|-----|
-| SSH | 22 | TCP | Anywhere (0.0.0.0/0) | Administración remota con PuTTY |
+| SSH | 22 | TCP | IP de administración | Administración remota con PuTTY |
 | HTTP | 80 | TCP | Anywhere (0.0.0.0/0) | Portal web |
 | HTTPS | 443 | TCP | Anywhere (0.0.0.0/0) | Portal web seguro |
-| Custom TCP | 445 | TCP | Anywhere (0.0.0.0/0) | Samba (compartición de archivos) |
+| Custom TCP | 445 | TCP | Red interna de oficina | Samba (compartición de archivos) |
 
-![Security Group con las 4 reglas de entrada: SSH 22, HTTPS 443, HTTP 80, TCP 445](capturas/Captura%20de%20pantalla%2003.png)
+> En producción el puerto SSH (22) debe restringirse a las IPs de los administradores, no a cualquier origen.
+
+![Security Group con las 4 reglas de entrada configuradas](capturas/Captura%20de%20pantalla%2003.png)
 *Captura 03 — Security Group con reglas SSH (22), HTTPS (443), HTTP (80) y Samba/TCP (445)*
 
 ### 2.4 Lanzamiento y verificación
 
-1. Revisar el resumen de la configuración
-2. Clic en **Launch Instance**
-3. Esperar a que el estado cambie a **running** (1-2 minutos)
-4. Anotar la **IP pública** asignada por AWS Academy
+1. Clic en **Launch Instance** → esperar estado **running** (1-2 minutos)
+2. Anotar la **IP pública** asignada — se usará en todos los pasos siguientes
+3. En producción: asignar una **Elastic IP** para tener IP pública fija
 
 ![Instancia SantysTours-Server en estado running con IP pública y detalle de la instancia](capturas/Captura%20de%20pantalla%2004%20y%2005.png)
-*Captura 04-05 — Instancia SantysTours-Server en estado running, IP pública 100.31.58.43, tipo t3.micro, par de claves vockey*
+*Captura 04-05 — Instancia SantysTours-Server en estado running, IP pública asignada, tipo t3.micro*
 
-### 2.5 Descarga de la clave para PuTTY
+### 2.5 Par de claves para PuTTY
 
-En AWS Academy, la clave privada **vockey** se descarga directamente desde el panel del laboratorio:
+Al crear la instancia, AWS genera un par de claves. Para conectar desde Windows con PuTTY:
 
-1. En el panel del laboratorio AWS Academy → clic en **Download PEM** o **Download PPK**
-2. Para conectar con PuTTY desde Windows → seleccionar **Download PPK**
-3. Guardar el archivo `labsuser.ppk` en `C:\Keys\` dentro de la VM Windows 11 Pro
-4. **No es necesario usar PuTTYgen** — AWS Academy ya proporciona el archivo en formato .ppk listo para usar
+1. Descargar la clave en formato **.ppk** directamente desde la consola AWS
+2. Guardar en el equipo de administración en una ubicación segura (ej: `C:\Keys\`)
+3. Esta clave se usará en PuTTY para autenticarse sin contraseña
 
 ### 2.6 Primera conexión SSH al servidor con PuTTY
 
-El acceso al servidor se realiza mediante **PuTTY** desde el equipo cliente Windows 11 Pro.
-El proceso completo de configuración de PuTTY está documentado en `03_configuracion_basica.md`.
-
-Pasos resumidos:
-1. Descargar `labsuser.ppk` desde el panel del laboratorio AWS Academy
-2. Abrir PuTTY → sesión guardada `SantysTours-Server` → **Open**
-3. Login: `ubuntu`
-4. Verificar que el sistema está operativo:
+1. Abrir PuTTY → introducir la IP pública del servidor → puerto 22 → tipo SSH
+2. Ir a **Connection → SSH → Auth → Credentials** → seleccionar el archivo `.ppk`
+3. Guardar la sesión como `SantysTours-Server` → **Open**
+4. Login: `ubuntu`
+5. Verificar el sistema:
 
 ```bash
 lsb_release -a
@@ -92,16 +91,11 @@ ip a
 
 ---
 
-
----
-
 ## 3. PARTE B — Base de datos: Amazon RDS MySQL
 
 ### 3.1 Descripción del servicio
 
-Amazon RDS (Relational Database Service) proporciona la base de datos MySQL 8.0 de The Santy's Tours. Al ser un **servicio totalmente gestionado**, AWS se encarga del sistema operativo subyacente, los parches de seguridad y las copias de seguridad automáticas diarias.
-
-> **En el entorno de prueba AWS Academy:** RDS se configura dentro de la misma VPC que la instancia EC2 y solo es accesible desde ella — no expuesto a internet público.
+Amazon RDS proporciona la base de datos MySQL 8.0 de The Santy's Tours como servicio totalmente gestionado. AWS gestiona el sistema operativo subyacente, los parches de seguridad y las copias de seguridad automáticas diarias.
 
 ### 3.2 Parámetros de configuración
 
@@ -112,35 +106,29 @@ Amazon RDS (Relational Database Service) proporciona la base de datos MySQL 8.0 
 | Almacenamiento | 20 GB SSD (gp2) |
 | Identificador de BD | `santytoursdb` |
 | Usuario maestro | `admin` |
-| Multi-AZ | No (entorno de prueba) |
+| Multi-AZ | Sí (producción) — No (entorno de prueba) |
 | Acceso público | **No** — solo accesible desde la EC2 |
 | VPC | La misma VPC que la instancia EC2 |
 
-### 3.3 Pasos de lanzamiento en AWS Academy
+### 3.3 Pasos de lanzamiento en AWS
 
 1. Navegar a **RDS** → **Databases** → **Create database**
-2. Método: **Standard create**
-3. Motor: **MySQL** → Versión **8.0**
-4. Plantilla: **Free Tier**
-5. Identificador de BD: `santytoursdb`
-6. Usuario maestro: `admin` → contraseña segura
-7. Tipo de instancia: **db.t3.micro**
-8. Almacenamiento: **20 GB SSD**
-9. Conectividad:
-   - VPC: la misma que la instancia EC2
-   - Acceso público: **No**
-   - Security Group: permitir MySQL (3306/TCP) **solo desde el Security Group de la EC2**
-10. Clic en **Create database** — el proceso tarda entre 5 y 10 minutos
+2. Método: **Standard create** → Motor: **MySQL** → Versión: **8.0**
+3. Plantilla: **Production** (o Free Tier para laboratorio)
+4. Identificador: `santytoursdb` → Usuario: `admin` → contraseña segura
+5. Instancia: **db.t3.micro** → Almacenamiento: 20 GB SSD
+6. Conectividad: VPC = misma que EC2 → Acceso público: **No**
+7. Security Group: permitir MySQL (3306/TCP) solo desde el Security Group de la EC2
+8. Clic en **Create database** (5-10 minutos)
 
 ### 3.4 Endpoint de conexión
 
-Una vez creada la instancia, anotar el **endpoint** desde el panel de RDS:
-
+Una vez creada, anotar el **endpoint** desde el panel RDS:
 ```
 santytoursdb.xxxxxxxxx.us-east-1.rds.amazonaws.com:3306
 ```
 
-Este endpoint se configura en el backend Node.js de la instancia EC2 para conectar con la base de datos.
+Este endpoint se configura en el backend Node.js de la instancia EC2.
 
 ---
 
@@ -148,25 +136,16 @@ Este endpoint se configura en el backend Node.js de la instancia EC2 para conect
 
 ### 4.1 Descripción del servicio
 
-Amazon S3 (Simple Storage Service) almacena todos los archivos multimedia y estáticos del proyecto:
-- Imágenes de los tours y fotografías de los guías
-- Documentos PDF de confirmación de reservas
-- Archivos estáticos del portal web (HTML, CSS, JavaScript)
-
-> S3 es un servicio completamente gestionado por AWS — **no requiere sistema operativo ni administración de servidor**.
+Amazon S3 almacena todos los archivos multimedia y estáticos: imágenes de tours, fotos de guías, PDFs de reservas y archivos estáticos del portal web.
 
 ### 4.2 Creación del bucket
 
 1. Navegar a **S3** → **Create bucket**
-2. Nombre del bucket: `santystours-media`
-3. Región: **us-east-1** (misma región que EC2 y RDS)
-4. Acceso público: **Desbloquear** para archivos estáticos (confirmar aviso)
-5. Versionado: Desactivado (entorno de prueba)
-6. Clic en **Create bucket**
+2. Nombre: `santystours-media` → Región: `eu-west-1` (Irlanda, para cumplir RGPD)
+3. Desbloquear acceso público para archivos estáticos
+4. Clic en **Create bucket**
 
-### 4.3 Política de acceso del bucket
-
-Aplicar la siguiente Bucket Policy para permitir lectura pública de los archivos estáticos:
+### 4.3 Política de acceso
 
 ```json
 {
@@ -187,129 +166,123 @@ Aplicar la siguiente Bucket Policy para permitir lectura pública de los archivo
 
 ## 5. PARTE D — Servicios gestionados: ALB, CloudFront y Route 53
 
-Los siguientes servicios completan la arquitectura definida en el módulo MPO. Son **servicios totalmente gestionados por AWS** — no requieren instalación de sistema operativo.
+Servicios totalmente gestionados por AWS — no requieren instalación de sistema operativo.
 
 ### 5.1 Application Load Balancer (ALB)
 
-El ALB distribuye el tráfico entrante entre las instancias EC2 disponibles. En el entorno de prueba con una sola instancia EC2, el ALB no se configura. En producción real gestionará el escalado automático.
-
-| Parámetro | Valor (producción) |
-|-----------|-------------------|
+| Parámetro | Valor |
+|-----------|-------|
 | Tipo | Application Load Balancer |
 | Esquema | Internet-facing |
-| Listeners | HTTP (80) → redirige a HTTPS (443) |
+| Listeners | HTTP (80) → redirect a HTTPS (443) |
 | Target Group | Instancias EC2 (puerto 80) |
 | Health check | `GET /health` → 200 OK |
 
-> **Entorno de prueba:** No configurado. El acceso al servidor se realiza directamente por la IP pública de la instancia EC2.
-
 ### 5.2 Amazon CloudFront
 
-CloudFront actúa como CDN distribuyendo los archivos estáticos desde el servidor geográficamente más cercano al usuario, reduciendo la latencia.
-
-| Parámetro | Valor (producción) |
-|-----------|-------------------|
+| Parámetro | Valor |
+|-----------|-------|
 | Origen | Bucket S3 `santystours-media` |
 | Protocolo | HTTPS only |
-| TTL caché | 86400s para imágenes, 0 para HTML |
-| Función | Servir archivos estáticos con baja latencia globalmente |
-
-> **Entorno de prueba:** No configurado. Los archivos se sirven directamente desde S3.
+| TTL caché | 86400s imágenes, 0 HTML |
+| Función | CDN global — reduce latencia para usuarios internacionales |
 
 ### 5.3 Amazon Route 53
 
-Route 53 gestiona el DNS del dominio `thesantystours.com`, traduciendo el nombre de dominio a la IP del ALB.
-
-| Parámetro | Valor (producción) |
-|-----------|-------------------|
+| Parámetro | Valor |
+|-----------|-------|
 | Dominio | `thesantystours.com` |
 | Tipo de registro | A — Alias apuntando al ALB |
 | TTL | 300 segundos |
 
-> **Entorno de prueba:** No configurado. El acceso se realiza mediante IP pública de la EC2.
-
 ---
 
-## 6. PARTE E — Cliente: Instalación de Windows 11 Pro en VirtualBox: Instalación de Windows 11 Pro en VirtualBox
+## 6. PARTE E — Equipos cliente: Instalación de Windows 11 Pro
 
-### 6.1 Entorno de virtualización
+### 6.1 Especificaciones de los equipos de oficina
 
-| Componente | Especificación |
-|-----------|----------------|
-| Host | Lenovo Legion 5 |
-| CPU Host | Intel Core i9 |
-| RAM Host | 32 GB |
-| Hipervisor | Oracle VirtualBox 7.x |
-| SO invitado | Windows 11 Pro |
+The Santy's Tours equipa su oficina con equipos de sobremesa o portátiles con las siguientes características mínimas para ejecutar Windows 11 Pro:
 
-### 6.2 Descarga de la ISO de Windows 11
+| Componente | Especificación mínima |
+|-----------|----------------------|
+| CPU | Intel Core i5 de 8ª generación o superior (64-bit, TPM 2.0) |
+| RAM | 8 GB |
+| Almacenamiento | 256 GB SSD |
+| Conexión de red | Ethernet o WiFi con acceso a internet |
+| SO a instalar | Windows 11 Pro |
 
-1. Acceder a [https://www.microsoft.com/software-download/windows11](https://www.microsoft.com/software-download/windows11)
-2. Descargar la **ISO de Windows 11** (idioma Español)
-3. Guardar el archivo .iso en el equipo host
+### 6.2 Preparación del medio de instalación (USB booteable)
 
-### 6.3 Creación de la máquina virtual
+1. Descargar la **Media Creation Tool** desde [https://www.microsoft.com/software-download/windows11](https://www.microsoft.com/software-download/windows11)
+2. Ejecutar la herramienta → seleccionar **Crear medios de instalación**
+3. Idioma: **Español (España)** → Edición: **Windows 11** → Arquitectura: **64-bit**
+4. Seleccionar **Unidad flash USB** → elegir un USB de mínimo 8 GB
+5. La herramienta descarga Windows 11 y crea el USB booteable automáticamente
 
-1. Abrir VirtualBox → **Nueva**
-2. Configurar:
+### 6.3 Arranque desde USB e instalación
 
-| Parámetro | Valor |
-|-----------|-------|
-| Nombre | `SantysTours-Cliente` |
-| Tipo | Microsoft Windows |
-| Versión | Windows 11 (64-bit) |
-| RAM | 4096 MB |
-| Disco | 60 GB (VDI dinámico) |
+1. Conectar el USB booteable al equipo
+2. Acceder a la BIOS/UEFI (habitualmente tecla F2, F12 o DEL al arrancar)
+3. Cambiar el orden de arranque → USB como primer dispositivo → guardar y reiniciar
+4. Seleccionar idioma y región → clic en **Instalar ahora**
+5. Introducir la clave de producto Windows 11 Pro (o seleccionar "No tengo clave" para activar después)
+6. Seleccionar edición: **Windows 11 Pro** ✅
+7. Aceptar los términos de licencia
+8. Tipo de instalación: **Personalizada** (instalación limpia)
+9. Seleccionar el disco de instalación → formatear si es necesario → **Siguiente**
+10. Esperar a que finalice la instalación (15-30 minutos, el equipo reiniciará varias veces)
 
-3. **Configuración → Red** → Adaptador 1: **NAT**
+### 6.4 Configuración inicial post-instalación
 
-### 6.4 Proceso de instalación de Windows 11 Pro
-
-1. Montar la ISO → iniciar la VM
-2. Seleccionar edición: **Windows 11 Pro**
-3. Tipo de instalación: **Personalizada** (instalación limpia)
-4. Seleccionar el disco completo
-5. Completar el asistente de configuración inicial
+1. Seleccionar región: **España** → distribución de teclado: **Español**
+2. Conectar a la red de la oficina
+3. Configurar cuenta local de administrador: `Admin_SantysTours`
+4. Desactivar el requisito de cuenta Microsoft si se solicita
 
 ### 6.5 Verificación post-instalación
 
 ```
 Inicio → Configuración → Sistema → Acerca de
 → Confirmar: Windows 11 Pro
-→ Renombrar equipo: SantysTours-Admin
+→ Renombrar equipo: SantysTours-Admin-01 (numeración por equipo)
+→ Unir al dominio si aplica
 ```
 
 ### 6.6 Instalación de herramientas de administración
 
-Una vez instalado Windows 11 Pro:
+En cada equipo Windows 11 Pro de la oficina:
 
 1. Instalar **PuTTY** desde [https://www.putty.org](https://www.putty.org)
-2. Descargar `labsuser.ppk` desde el panel del laboratorio AWS Academy
-3. Copiar `labsuser.ppk` a `C:\Keys\` dentro de la VM
-4. Configurar la sesión PuTTY (ver `03_configuracion_basica.md`)
+2. Copiar la clave privada `.ppk` del servidor EC2 al equipo en `C:\Keys\`
+3. Configurar sesión PuTTY (ver `03_configuracion_basica.md`)
+4. Verificar conexión SSH al servidor y acceso a las unidades de red Samba
 
 ---
 
 ## 7. Resumen del plan de implantación
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│              PLAN DE IMPLANTACIÓN ISO                        │
-├────────────────────────┬────────────────────────────────────┤
-│  SERVIDOR (AWS Academy)│  CLIENTE (VirtualBox)              │
-│                        │                                    │
-│  1. Consola AWS Academy│  1. Descarga ISO Windows 11 Pro    │
-│  2. Launch Instance    │  2. Crear VM en VirtualBox         │
-│     → AMI Ubuntu 22.04 │     → 4GB RAM, 60GB disco          │
-│     → t3.micro         │  3. Instalación Windows 11 Pro     │
-│     → vockey (clave    │     → Seleccionar edición Pro      │
-│       del laboratorio) │     → Instalación limpia           │
-│     → Security Group   │  4. Verificar SO + renombrar equipo│
-│       (22,80,443,445)  │  5. Instalar PuTTY                 │
-│  3. Descargar .ppk     │  6. Copiar labsuser.ppk            │
-│     desde panel lab    │  7. Configurar sesión PuTTY        │
-│  4. Conectar por PuTTY │                                    │
-└────────────────────────┴────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                  PLAN DE IMPLANTACIÓN ISO                           │
+├──────────────────────────────┬──────────────────────────────────────┤
+│  INFRAESTRUCTURA AWS         │  EQUIPOS DE OFICINA                  │
+│                              │                                      │
+│  1. EC2 — Ubuntu Server      │  1. Preparar USB booteable           │
+│     → Launch Instance        │     → Media Creation Tool            │
+│     → AMI Ubuntu 22.04       │     → Windows 11 Pro ISO             │
+│     → t3.micro               │  2. Instalar Windows 11 Pro          │
+│     → Security Group         │     → Boot desde USB                 │
+│     → Par de claves .ppk     │     → Instalación limpia             │
+│  2. RDS — MySQL 8.0          │     → Edición Pro seleccionada       │
+│     → db.t3.micro            │  3. Configurar equipo                │
+│     → VPC privada            │     → Nombre: SantysTours-Admin-XX   │
+│     → Endpoint de conexión   │     → Cuenta local de admin          │
+│  3. S3 — santystours-media   │  4. Instalar herramientas            │
+│     → Bucket + política      │     → PuTTY + clave .ppk             │
+│     → Estructura de carpetas │     → Conexión SSH al servidor       │
+│  4. ALB + CloudFront + R53   │     → Unidades de red Samba          │
+│     → Balanceo + CDN + DNS   │                                      │
+└──────────────────────────────┴──────────────────────────────────────┘
 ```
 
 ---
