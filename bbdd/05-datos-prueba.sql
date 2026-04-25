@@ -1,0 +1,133 @@
+-- =============================================================
+-- The Santy's Tours — Datos de prueba
+-- Módulo: Gestión de Bases de Datos (0372)
+-- ASIR 2025/2026
+-- =============================================================
+
+USE santys_tours;
+
+-- =============================================================
+-- USUARIOS (10 registros: 1 admin, 7 clientes, 2 con rol guia)
+-- =============================================================
+INSERT INTO usuarios (nombre, apellidos, email, telefono, rol, activo, created_at) VALUES
+('Santiago',  'Martínez López',   'santiago@santystours.com',  '+34 612 345 678', 'admin',   1, '2024-01-10 09:00:00'),
+('James',     'Wilson',           'james.wilson@gmail.com',    '+44 7700 900123', 'cliente', 1, '2024-02-15 11:30:00'),
+('Sophie',    'Dubois',           'sophie.dubois@outlook.fr',  '+33 6 12 34 56 78','cliente',1, '2024-02-20 14:00:00'),
+('Carlos',    'Fernández Ruiz',   'carlos.fernandez@gmail.com','+34 654 789 012', 'cliente', 1, '2024-03-01 10:15:00'),
+('Yuki',      'Tanaka',           'yuki.tanaka@yahoo.co.jp',   '+81 90 1234 5678', 'cliente',1, '2024-03-10 08:45:00'),
+('Emma',      'Schneider',        'emma.schneider@web.de',     '+49 151 23456789','cliente', 1, '2024-03-18 16:20:00'),
+('Martina',   'Rossi',            'martina.rossi@libero.it',   '+39 333 456 7890','cliente', 1, '2024-04-05 12:00:00'),
+('David',     'García Pérez',     'david.garcia@hotmail.com',  '+34 678 901 234', 'cliente', 1, '2024-04-12 09:30:00'),
+('Laura',     'Sánchez Moreno',   'laura.sanchez@gmail.com',   '+34 691 234 567', 'cliente', 1, '2024-04-20 17:00:00'),
+('Ahmed',     'El Mansouri',      'ahmed.elmansouri@gmail.com','+212 6 61 234567','cliente', 1, '2024-05-03 13:45:00');
+
+-- =============================================================
+-- GUÍAS (6 registros)
+-- =============================================================
+INSERT INTO guias (nombre, apellidos, email, telefono, idiomas, especialidad, activo) VALUES
+('Marc',      'Puigdomènech',  'marc.puig@santystours.com',    '+34 611 111 001', 'Español, Inglés',         'Historia y arquitectura modernista de Barcelona',      1),
+('Claudia',   'Romero Vidal',  'claudia.romero@santystours.com','+34 611 111 002', 'Español, Inglés',        'Gastronomía catalana y experiencias culturales',       1),
+('Jordi',     'Sala Mas',      'jordi.sala@santystours.com',   '+34 611 111 003', 'Español, Inglés, Catalán','Excursiones de naturaleza y senderismo',               1),
+('Natalia',   'Gómez Torres',  'natalia.gomez@santystours.com','+34 611 111 004', 'Español, Inglés',         'Arte flamenco y cultura andaluza en Barcelona',        1),
+('Pau',       'Esteve Roca',   'pau.esteve@santystours.com',   '+34 611 111 005', 'Español, Inglés, Catalán','Barrios históricos y leyendas urbanas de Barcelona',   1),
+('Marta',     'Llopis Serra',  'marta.llopis@santystours.com', '+34 611 111 006', 'Español, Inglés',         'Excursiones día completo y turismo familiar',          1);
+
+-- =============================================================
+-- TOURS (8 registros)
+-- =============================================================
+INSERT INTO tours (nombre, descripcion, duracion_min, precio_persona, categoria, ubicacion, idioma, activo) VALUES
+('Lo mejor del Eixample modernista',
+ 'Recorrido a pie por las joyas del modernismo catalán: la Sagrada Família, la Casa Batlló y la Casa Milà (La Pedrera). El guía explica la vida y obra de Gaudí y sus contemporáneos.',
+ 150, 29.00, 'tour', 'Eixample, Barcelona', 'es/en', 1),
+
+('Barrio Gótico y El Born secreto',
+ 'Descubre los rincones más desconocidos del Barrio Gótico y el trendy barrio de El Born. Historia, leyendas medievales y los mejores bares de vermut.',
+ 120, 22.00, 'tour', 'Barrio Gótico / El Born, Barcelona', 'es/en', 1),
+
+('Experiencia flamenca en Barcelona',
+ 'Noche de flamenco auténtico en un tablao con cena de tapas incluida. Espectáculo de 45 minutos con artistas profesionales y explicación de la historia del flamenco.',
+ 180, 65.00, 'experiencia', 'El Raval, Barcelona', 'es/en', 1),
+
+('Excursión a Montserrat con telecabina',
+ 'Excursión de día completo a la montaña de Montserrat. Incluye transporte desde Barcelona, telecabina, visita al monasterio y tiempo libre para senderismo.',
+ 480, 75.00, 'excursion', 'Montserrat, Barcelona', 'es/en', 1),
+
+('Mercado de La Boqueria y taller de cocina catalana',
+ 'Visita guiada al Mercado de La Boqueria con el chef seleccionando ingredientes frescos, seguida de un taller de cocina donde aprenderás a elaborar pan con tomate, escalivada y crema catalana.',
+ 240, 89.00, 'experiencia', 'La Rambla, Barcelona', 'es/en', 1),
+
+('Sitges en un día: pueblo, playas y cava',
+ 'Excursión a Sitges, la joya del Mediterráneo. Visita del casco histórico, tiempo libre en la playa y cata de cava en una bodega local.',
+ 420, 68.00, 'excursion', 'Sitges, Garraf', 'es/en', 1),
+
+('Montjuïc: castillo, jardines y vistas',
+ 'Subida en teleférico al castillo de Montjuïc, visita a los jardines de Laribal y a la Fundació Joan Miró. Las mejores vistas panorámicas de Barcelona.',
+ 180, 35.00, 'tour', 'Montjuïc, Barcelona', 'es/en', 1),
+
+('Gràcia y el Parque Güell al atardecer',
+ 'Paseo por el bohemio barrio de Gràcia hasta llegar al Parque Güell para disfrutar del atardecer desde la terraza principal. El tour incluye parada en una heladería artesanal del barrio.',
+ 150, 25.00, 'tour', 'Gràcia / Parque Güell, Barcelona', 'es/en', 1);
+
+-- =============================================================
+-- SESIONES DE TOUR (12 registros)
+-- =============================================================
+INSERT INTO sesiones_tour (id_tour, id_guia, fecha_hora, capacidad_maxima, plazas_disponibles, estado) VALUES
+(1, 1, '2025-06-02 10:00:00', 15, 0,  'completada'),
+(1, 1, '2025-06-09 10:00:00', 15, 3,  'completada'),
+(1, 5, '2025-06-16 10:00:00', 15, 8,  'programada'),
+(1, 1, '2025-06-23 10:00:00', 15, 15, 'programada'),
+(2, 5, '2025-06-03 17:00:00', 12, 0,  'completada'),
+(2, 5, '2025-06-10 17:00:00', 12, 4,  'programada'),
+(3, 4, '2025-06-06 21:00:00', 20, 0,  'completada'),
+(3, 4, '2025-06-13 21:00:00', 20, 5,  'programada'),
+(4, 3, '2025-06-07 08:30:00', 25, 0,  'completada'),
+(4, 3, '2025-06-14 08:30:00', 25, 10, 'programada'),
+(5, 2, '2025-06-05 10:00:00', 10, 0,  'completada'),
+(8, 5, '2025-06-04 18:30:00', 15, 0,  'completada');
+
+-- =============================================================
+-- RESERVAS (12 registros)
+-- =============================================================
+INSERT INTO reservas (id_usuario, id_sesion, num_plazas, precio_total, estado, created_at) VALUES
+(2, 1, 2, 58.00,  'completada', '2025-05-20 10:30:00'),
+(3, 1, 3, 87.00,  'completada', '2025-05-21 14:00:00'),
+(4, 1, 2, 58.00,  'completada', '2025-05-22 09:15:00'),
+(5, 5, 2, 44.00,  'completada', '2025-05-25 11:00:00'),
+(6, 5, 4, 88.00,  'completada', '2025-05-26 16:30:00'),
+(7, 7, 2, 130.00, 'completada', '2025-05-28 12:00:00'),
+(8, 7, 3, 195.00, 'completada', '2025-05-29 18:45:00'),
+(9, 9, 4, 300.00, 'completada', '2025-05-30 08:00:00'),
+(10, 9, 2, 150.00,'completada', '2025-05-31 10:00:00'),
+(2, 11, 2, 178.00,'completada', '2025-05-15 14:00:00'),
+(3, 12, 2, 50.00, 'completada', '2025-05-18 17:00:00'),
+(4, 6, 2, 44.00,  'confirmada', '2025-06-01 09:00:00');
+
+-- =============================================================
+-- PAGOS (12 registros)
+-- =============================================================
+INSERT INTO pagos (id_reserva, metodo_pago, importe, estado, fecha_pago) VALUES
+(1,  'tarjeta',  58.00,  'pagado',    '2025-06-02 10:30:00'),
+(2,  'efectivo', 87.00,  'pagado',    '2025-06-02 10:35:00'),
+(3,  'tarjeta',  58.00,  'pagado',    '2025-06-02 10:40:00'),
+(4,  'tarjeta',  44.00,  'pagado',    '2025-06-03 17:10:00'),
+(5,  'efectivo', 88.00,  'pagado',    '2025-06-03 17:15:00'),
+(6,  'tarjeta',  130.00, 'pagado',    '2025-06-06 21:05:00'),
+(7,  'efectivo', 195.00, 'pagado',    '2025-06-06 21:10:00'),
+(8,  'tarjeta',  300.00, 'pagado',    '2025-06-07 09:00:00'),
+(9,  'efectivo', 150.00, 'pagado',    '2025-06-07 09:05:00'),
+(10, 'tarjeta',  178.00, 'pagado',    '2025-06-05 10:15:00'),
+(11, 'tarjeta',  50.00,  'pagado',    '2025-06-04 18:45:00'),
+(12, 'efectivo', 44.00,  'pendiente', NULL);
+
+-- =============================================================
+-- VALORACIONES (8 registros)
+-- =============================================================
+INSERT INTO valoraciones (id_usuario, id_tour, puntuacion, comentario, fecha) VALUES
+(2, 1, 5, 'Una experiencia increíble. Marc nos explicó cada detalle con una pasión contagiosa. Sin duda el mejor tour de Barcelona.', '2025-06-03 09:00:00'),
+(3, 1, 4, 'Muy buen tour, bien organizado y el guía súper amable. Le quito una estrella porque el grupo era algo grande para mi gusto.', '2025-06-03 11:30:00'),
+(4, 1, 5, 'Impresionante. La Sagrada Família vista con contexto histórico es otra experiencia completamente diferente.', '2025-06-03 14:00:00'),
+(5, 2, 5, 'El mejor tour del Gótico que he hecho. Pau conoce cada callejuela y cada leyenda. Muy recomendable.', '2025-06-04 10:00:00'),
+(6, 2, 4, 'Muy entretenido y diferente a otros tours. La parada de vermut fue un detalle genial.', '2025-06-04 18:00:00'),
+(7, 3, 5, 'La noche de flamenco fue mágica. Las tapas estaban deliciosas y el espectáculo nos dejó sin palabras.', '2025-06-07 10:00:00'),
+(9, 4, 5, 'Montserrat es un lugar espectacular y la organización fue perfecta. Jordi nos dio libertad y también nos orientó muy bien.', '2025-06-08 16:00:00'),
+(2, 5, 4, 'El taller de cocina fue divertidísimo. Aprendimos mucho y la crema catalana que preparamos estaba buenísima.', '2025-06-06 12:00:00');
