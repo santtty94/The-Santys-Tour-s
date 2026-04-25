@@ -96,22 +96,179 @@ sudo ufw status verbose
 
 ---
 
-## 3. PARTE B — Cliente Windows 11 Pro en VirtualBox
 
-### 3.1 Nombre del equipo
+---
+
+## 3. PARTE B — Configuración de Amazon RDS MySQL
+
+Amazon RDS no requiere configuración de sistema operativo — AWS lo gestiona completamente. La configuración básica consiste en establecer los parámetros de conexión, seguridad y rendimiento de la base de datos.
+
+### 3.1 Verificar conectividad EC2 → RDS
+
+Desde la sesión PuTTY conectada al servidor EC2, verificar que la instancia EC2 puede alcanzar la base de datos RDS:
+
+```bash
+# Instalar cliente MySQL
+sudo apt install mysql-client -y
+
+# Probar conexión al endpoint RDS
+mysql -h santytoursdb.xxxxxxxxx.us-east-1.rds.amazonaws.com -u admin -p
+```
+
+Si la conexión es exitosa, aparecerá el prompt de MySQL:
+```
+Welcome to the MySQL monitor...
+mysql>
+```
+
+### 3.2 Crear la base de datos y usuario de aplicación
+
+Una vez conectado al servidor MySQL de RDS:
+
+```sql
+-- Crear base de datos del proyecto
+CREATE DATABASE santytoursdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Crear usuario específico para la aplicación (principio de mínimo privilegio)
+CREATE USER 'santyapp'@'%' IDENTIFIED BY 'ContraseñaSegura123!';
+
+-- Otorgar permisos solo sobre la base de datos del proyecto
+GRANT SELECT, INSERT, UPDATE, DELETE ON santytoursdb.* TO 'santyapp'@'%';
+
+FLUSH PRIVILEGES;
+SHOW DATABASES;
+```
+
+### 3.3 Configuración del Security Group de RDS
+
+Verificar que el Security Group de RDS permite la conexión desde EC2:
+
+| Tipo | Puerto | Origen |
+|------|--------|--------|
+| MySQL/Aurora | 3306/TCP | Security Group de la instancia EC2 |
+
+> **Importante:** El puerto 3306 de RDS **no debe estar abierto a internet** (0.0.0.0/0). Solo debe aceptar conexiones desde el Security Group de la EC2.
+
+### 3.4 Configurar conexión en el backend Node.js (EC2)
+
+En la instancia EC2, configurar las variables de entorno de conexión a RDS:
+
+```bash
+sudo nano /etc/environment
+```
+
+Añadir:
+```bash
+DB_HOST="santytoursdb.xxxxxxxxx.us-east-1.rds.amazonaws.com"
+DB_PORT="3306"
+DB_NAME="santytoursdb"
+DB_USER="santyapp"
+DB_PASS="ContraseñaSegura123!"
+```
+
+### 3.5 Resumen de configuración RDS
+
+| Parámetro | Valor |
+|-----------|-------|
+| Endpoint | `santytoursdb.xxxxxxxxx.us-east-1.rds.amazonaws.com` |
+| Puerto | 3306 |
+| Motor | MySQL 8.0 |
+| Base de datos | `santytoursdb` |
+| Usuario aplicación | `santyapp` |
+| Acceso | Solo desde Security Group EC2 |
+| Backups automáticos | Activados por AWS (7 días de retención) |
+
+---
+
+## 4. PARTE C — Configuración de Amazon S3
+
+### 4.1 Estructura de carpetas en el bucket
+
+Una vez creado el bucket `santystours-media`, organizar el contenido con la siguiente estructura:
+
+```
+santystours-media/
+├── tours/          → Imágenes de los tours (JPG, WebP)
+├── guias/          → Fotografías de perfil de los guías
+├── docs/           → PDFs de confirmación de reservas
+└── static/         → Archivos estáticos del portal (CSS, JS, fuentes)
+```
+
+Crear las carpetas desde la consola AWS S3 → bucket → **Create folder**.
+
+### 4.2 Subir archivos desde EC2 usando AWS CLI
+
+Instalar AWS CLI en la instancia EC2:
+
+```bash
+sudo apt install awscli -y
+aws --version
+```
+
+Configurar credenciales (en AWS Academy usar las credenciales del laboratorio):
+
+```bash
+aws configure
+# AWS Access Key ID: [de las credenciales del laboratorio]
+# AWS Secret Access Key: [de las credenciales del laboratorio]
+# Default region: us-east-1
+# Default output format: json
+```
+
+Subir un archivo de prueba:
+
+```bash
+echo "test" > test.txt
+aws s3 cp test.txt s3://santystours-media/static/test.txt
+aws s3 ls s3://santystours-media/
+```
+
+### 4.3 Configurar CORS en S3
+
+Para que el portal web pueda acceder a los archivos desde el navegador, configurar CORS en el bucket:
+
+1. S3 → bucket `santystours-media` → **Permissions** → **Cross-origin resource sharing (CORS)**
+2. Añadir la siguiente configuración:
+
+```json
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["GET"],
+    "AllowedOrigins": ["*"],
+    "ExposeHeaders": []
+  }
+]
+```
+
+### 4.4 Resumen de configuración S3
+
+| Parámetro | Valor |
+|-----------|-------|
+| Nombre del bucket | `santystours-media` |
+| Región | `us-east-1` |
+| Acceso público | Activado para archivos estáticos |
+| CORS | Configurado para GET desde cualquier origen |
+| Estructura | tours/, guias/, docs/, static/ |
+
+---
+
+## 5. PARTE D — Cliente Windows 11 Pro en VirtualBox
+
+### 5.1 Nombre del equipo
 
 1. Inicio → Configuración → Sistema → Acerca de → **Cambiar nombre de este equipo**
 2. Establecer: `SantysTours-Admin` → Reiniciar
 
-### 3.2 Zona horaria
+### 5.2 Zona horaria
 
 Inicio → Configuración → Hora e idioma → Fecha y hora → **(UTC+01:00) Madrid**
 
-### 3.3 Red
+### 5.3 Red
 
 La VM usa adaptador **NAT** de VirtualBox. No requiere configuración adicional.
 
-### 3.4 Instalación y configuración de PuTTY
+### 5.4 Instalación y configuración de PuTTY
 
 #### 3.4.1 Descarga e instalación
 
@@ -161,7 +318,7 @@ lsb_release -a
 ![lsb_release -a mostrando Ubuntu 22.04.5 LTS codename jammy](capturas/Captura%20de%20pantalla%2010.png)
 *Captura 10 — lsb_release -a confirmando Ubuntu 22.04.5 LTS (jammy)*
 
-### 3.5 Resumen de configuración del cliente
+### 5.5 Resumen de configuración del cliente
 
 | Parámetro | Valor |
 |-----------|-------|
