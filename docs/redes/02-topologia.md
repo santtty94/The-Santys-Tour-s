@@ -27,36 +27,44 @@ Esta topología se ha elegido porque:
                       │     ROUTER / MÓDEM FIBRA   │
                       │     192.168.10.1 (GW)      │
                       │     DHCP + NAT + Firewall  │
-                      └──────────────┬─────────────┘
-                                     │
-             ┌───────────────────────┼───────────────────────┐
-             │ Ethernet              │ Ethernet               │ Ethernet
-   ┌─────────▼──────────┐  ┌────────▼────────┐  ┌───────────▼────────┐
-   │ Portátil Dev Web   │  │  ACCESS POINT   │  │ Portátil Admin     │
-   │ 192.168.10.20      │  │  192.168.10.5   │  │ 192.168.10.30      │
-   │ Lenovo Legion 5    │  │  Wi-Fi 6        │  │ Gama media i5      │
-   └────────────────────┘  └────────┬────────┘  └────────────────────┘
-                                    │ Wi-Fi 6
-              ┌─────────────────────┼─────────────────────┐
-              │                     │                     │
-   ┌──────────▼─────────┐  ┌────────▼───────────┐  ┌─────▼──────────────┐
-   │ Portátil Dev       │  │  Smartphones x3    │  │  Impresora Wi-Fi   │
-   │ App/BBDD           │  │  192.168.10.100+   │  │  192.168.10.40     │
-   │ 192.168.10.21      │  │  DHCP dinámico     │  │                    │
-   └────────────────────┘  └────────────────────┘  └────────────────────┘
+                      └──────┬───────────┬─────────┘
+                             │           │
+                  Ethernet   │           │ Ethernet (uplink AP)
+             ┌───────────────┤           │
+             │               │    ┌──────▼──────────┐
+  ┌──────────▼─────────┐     │    │  ACCESS POINT   │
+  │ Portátil Dev Web   │     │    │  192.168.10.5   │
+  │ 192.168.10.20      │     │    │  Wi-Fi 6        │
+  │ Lenovo Legion 5    │     │    └──────┬──────────┘
+  └────────────────────┘     │           │ Wi-Fi 6
+                             │    ┌──────┴──────────────────────┐
+  ┌──────────▼─────────┐     │    │                             │
+  │ Portátil Dev       │     │  ┌─▼──────────────┐  ┌──────────▼─────────┐
+  │ App/BBDD           │     │  │ Portátil Admin │  │  Smartphones x3    │
+  │ 192.168.10.21      │     │  │ 192.168.10.30  │  │  DHCP .100–.102    │
+  │ Lenovo Legion 5    │     │  │ Wi-Fi          │  │  Wi-Fi / 5G        │
+  └────────────────────┘     │  └────────────────┘  └────────────────────┘
+                             │
+                   ┌─────────▼──────────┐
+                   │  Impresora Wi-Fi   │
+                   │  192.168.10.40     │
+                   └────────────────────┘
+
+  Nota: la impresora se conecta al AP por Wi-Fi; se muestra
+  bajo el router por claridad del diagrama.
 
 ═══════════════════════════ INTERNET ═══════════════════════════════
 
-          ┌───────────┐  ┌─────────────┐  ┌──────┐  ┌──────────────────┐
-          │ Route 53  │  │ CloudFront  │  │ ALB  │  │ EC2 t3.micro     │
-          │ DNS       │─▶│ CDN         │─▶│      │─▶│ Ubuntu 22.04     │
-          └───────────┘  └─────────────┘  └──────┘  │ Node.js API REST │
-                                                     └────────┬─────────┘
-                                              ┌───────────────┤
-                                     ┌────────▼───────┐  ┌────▼──────────┐
-                                     │  RDS MySQL     │  │  Amazon S3    │
-                                     │  db.t3.micro   │  │  Imágenes     │
-                                     └────────────────┘  └───────────────┘
+  ┌───────────┐  ┌─────────────┐  ┌──────┐  ┌──────────────────────┐
+  │ Route 53  │  │ CloudFront  │  │ ALB  │  │ EC2 t3.micro         │
+  │ DNS       │─▶│ CDN         │─▶│      │─▶│ Ubuntu 22.04         │
+  └───────────┘  └─────────────┘  └──────┘  │ Node.js API REST     │
+                                             └──────────┬───────────┘
+                                          ┌─────────────┤
+                                 ┌────────▼───────┐  ┌──▼────────────┐
+                                 │  RDS MySQL     │  │  Amazon S3    │
+                                 │  db.t3.micro   │  │  Imágenes     │
+                                 └────────────────┘  └───────────────┘
 ```
 
 ---
@@ -65,9 +73,17 @@ Esta topología se ha elegido porque:
 
 ### Red local de oficina
 
-La red local opera en el rango `192.168.10.0/24`. El router actúa como gateway (`192.168.10.1`) y servidor DHCP para los dispositivos con asignación dinámica.
+La red local opera en el rango `192.168.10.0/24`. El router actúa como gateway (`192.168.10.1`) y servidor DHCP.
 
-Los portátiles tienen IPs estáticas asignadas por reserva DHCP (basada en MAC) para facilitar la administración. El Access Point se conecta al router por cable Ethernet en **modo AP puro** — no crea subred adicional, extiende la misma red.
+Los **portátiles de desarrollo** (192.168.10.20 y .21) se conectan por **cable Ethernet** directamente al router, garantizando la máxima estabilidad y velocidad para tareas de desarrollo, despliegue y acceso SSH al servidor EC2. Sus IPs son correlativas dentro del bloque de desarrollo (.20–.29).
+
+El **portátil de administración** (192.168.10.30) se conecta por **Wi-Fi** a través del Access Point. Al tratarse de un equipo de uso ofimático (reservas, atención al cliente, facturación), la conectividad inalámbrica es suficiente y aporta flexibilidad de movilidad dentro de la oficina. Su IP está en el bloque de administración (.30–.39), separado del bloque de desarrollo para reflejar la distinción funcional.
+
+Los **smartphones** reciben IP dinámica del pool DHCP y se conectan por Wi-Fi cuando están en la oficina, o por 5G cuando operan en campo.
+
+La **impresora** tiene IP fija (.40) y se conecta al Access Point por Wi-Fi.
+
+El **Access Point** se conecta al router por cable Ethernet en **modo AP puro** — no crea subred adicional, extiende la misma red `192.168.10.0/24`.
 
 ### Conexión con la nube (AWS)
 
@@ -85,9 +101,10 @@ Los portátiles de oficina se conectan al servidor EC2 en AWS a través de inter
 |---|---|
 | Topología en estrella | Estándar en redes de oficina pequeñas, fácil de gestionar y diagnosticar |
 | Sin servidor físico local | Modelo cloud-first: menor coste inicial, sin mantenimiento de hardware, escalabilidad automática |
+| Portátiles de desarrollo por Ethernet | Máxima estabilidad y velocidad para SSH, despliegues y desarrollo |
+| Portátil de administración por Wi-Fi | Uso ofimático; la conectividad inalámbrica es suficiente y aporta movilidad |
+| IPs .20/.21 para desarrollo, .30 para admin | Separación funcional por bloques de IP para facilitar la administración |
 | Access Point separado del router | Mejor cobertura Wi-Fi y posibilidad de segmentar redes en el futuro |
-| IPs estáticas para portátiles | Facilita la configuración de reglas de acceso y el diagnóstico de red |
-| IPs dinámicas para smartphones e impresora | Dispositivos con acceso esporádico que no requieren IP fija |
 
 ---
 
