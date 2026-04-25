@@ -5,6 +5,9 @@
 
 ---
 
+> **Nota sobre las evidencias:** Los procedimientos y justificaciones de este documento corresponden al entorno de producción real. Las capturas aportadas en otros documentos fueron tomadas en un entorno de laboratorio (AWS + VirtualBox) como evidencia práctica del proyecto intermodular ASIR.
+
+
 ## 1. Introducción
 
 The Santy's Tours es una agencia de turismo de ocio y aventura con sede en Barcelona. Su infraestructura tecnológica requiere un sistema operativo que soporte:
@@ -164,7 +167,7 @@ Para los equipos de administración de la agencia (oficina), se propone:
 - **Familiaridad del personal**: los empleados de oficina y guías turísticos no tienen perfil técnico. Windows 11 Pro ofrece la interfaz más familiar y reduce la curva de aprendizaje.
 - **Compatibilidad con herramientas de gestión**: Suite Microsoft Office, navegadores, clientes de correo y herramientas de gestión turística funcionan de forma nativa en Windows.
 - **Integración con Samba**: Windows 11 Pro accede de forma transparente a las carpetas compartidas del servidor Ubuntu mediante unidades de red Samba (SMB/CIFS).
-- **Administración remota del servidor**: el personal técnico gestiona el servidor Ubuntu desde Windows 11 Pro usando **PuTTY** con la clave `labsuser.ppk` (vockey de AWS Academy).
+- **Administración remota del servidor**: el personal técnico gestiona el servidor Ubuntu desde los equipos Windows 11 Pro de la oficina usando **PuTTY** con la clave privada descargada de AWS.
 - **Sin coste adicional de licencia**: la licencia Windows 11 Pro viene incluida como OEM en los equipos de administración adquiridos.
 
 ---
@@ -188,7 +191,7 @@ El módulo ISO cubre los sistemas operativos y la configuración de **todos los 
 - **EC2 + Ubuntu Server 22.04 LTS**: Es el único componente con sistema operativo que administramos directamente. El resto de servicios AWS son gestionados — AWS se encarga de su SO, parches y mantenimiento.
 - **RDS en lugar de MySQL en EC2**: Seguimos la arquitectura MPO que separa la capa de aplicación (EC2) de la capa de datos (RDS), mejorando la seguridad, escalabilidad y disponibilidad.
 - **S3 para almacenamiento**: Los archivos multimedia no se almacenan en el disco de la EC2, sino en S3, lo que permite escalar el almacenamiento independientemente del servidor.
-- **ALB + CloudFront + Route 53**: En el entorno de prueba AWS Academy estos servicios no se configuran (se accede directamente por IP pública de la EC2). En producción real formarán parte de la arquitectura completa.
+- **ALB + CloudFront + Route 53**: En el entorno de prueba AWS estos servicios no se configuran (se accede directamente por IP pública de la EC2). En producción real formarán parte de la arquitectura completa.
 
 
 ---
