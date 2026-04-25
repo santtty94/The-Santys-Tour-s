@@ -119,6 +119,9 @@ Los equipos de administración son máquinas físicas con Windows 11 Pro instala
 2. Establecer: `SantysTours-Admin-01` (numeración por equipo)
 3. Reiniciar para aplicar el cambio
 
+![Configuración Sistema Información mostrando edición Windows 11 y nombre del equipo](capturas/Captura%20de%20pantalla%2020.png)
+*Captura 20 — Sistema → Información: edición Windows 11 instalada en la VM SantysTours-Admin-01*
+
 ### 3.2 Zona horaria
 
 1. Inicio → Configuración → Hora e idioma → Fecha y hora
