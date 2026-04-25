@@ -189,7 +189,83 @@ En cada equipo físico Windows 11 Pro de la oficina se configuran cuentas locale
 5. Nombre: `Empleado_Oficina` → establecer contraseña → Siguiente
 6. El usuario se crea como **Usuario estándar** por defecto
 
-### 3.3 Acceso Samba desde Windows 11 Pro
+
+### 3.3 Restricciones de permisos mediante directivas de grupo (gpedit.msc)
+
+Windows 11 Pro incluye el **Editor de directivas de grupo local** (`gpedit.msc`), que permite aplicar restricciones específicas sobre las cuentas estándar. Estas directivas se configuran desde la cuenta `Admin_SantysTours`.
+
+#### Abrir el editor de directivas de grupo
+
+1. Iniciar sesión con la cuenta `Admin_SantysTours`
+2. Pulsar **Win + R** → escribir `gpedit.msc` → **Aceptar**
+
+#### 1. Prohibir la instalación de software
+
+Ruta: `Configuración de equipo → Plantillas administrativas → Windows Components → Windows Installer`
+
+- Directiva: **Deshabilitar Windows Installer**
+- Valor: **Habilitada** → opción: *Solo para aplicaciones no administradas*
+
+#### 2. Restringir el acceso al Panel de Control y Configuración
+
+Ruta: `Configuración de usuario → Plantillas administrativas → Panel de control`
+
+- Directiva: **Prohibir el acceso al Panel de control y a la configuración de PC**
+- Valor: **Habilitada**
+
+#### 3. Deshabilitar el acceso al símbolo del sistema (CMD)
+
+Ruta: `Configuración de usuario → Plantillas administrativas → Sistema`
+
+- Directiva: **Impedir el acceso al símbolo del sistema**
+- Valor: **Habilitada** → *Deshabilitar también el procesamiento de scripts: Sí*
+
+#### 4. Deshabilitar el Administrador de tareas
+
+Ruta: `Configuración de usuario → Plantillas administrativas → Sistema → Opciones de Ctrl+Alt+Supr`
+
+- Directiva: **Quitar el Administrador de tareas**
+- Valor: **Habilitada**
+
+#### 5. Política de contraseñas y bloqueo de cuenta
+
+Ruta: `Configuración de equipo → Configuración de Windows → Configuración de seguridad → Directivas de cuenta`
+
+| Directiva | Valor |
+|-----------|-------|
+| Longitud mínima de contraseña | 10 caracteres |
+| Requisitos de complejidad | Habilitada |
+| Vigencia máxima de la contraseña | 90 días |
+| Umbral de bloqueo de cuenta | 5 intentos fallidos |
+| Duración del bloqueo de cuenta | 15 minutos |
+
+#### 6. Bloqueo automático de pantalla
+
+Ruta: `Configuración de equipo → Plantillas administrativas → Panel de control → Personalización`
+
+- **Habilitar protector de pantalla** → Habilitada
+- **Tiempo de espera del protector de pantalla** → Habilitada → 300 segundos (5 minutos)
+- **Proteger el protector de pantalla con contraseña** → Habilitada
+
+#### Aplicar las directivas
+
+```cmd
+gpupdate /force
+```
+
+#### Resumen de restricciones
+
+| Acción | Empleado_Oficina | Admin_SantysTours |
+|--------|-----------------|------------------|
+| Instalar software | ❌ Bloqueado | ✅ Permitido |
+| Panel de Control / Configuración | ❌ Bloqueado | ✅ Permitido |
+| CMD / PowerShell | ❌ Bloqueado | ✅ Permitido |
+| Administrador de tareas | ❌ Bloqueado | ✅ Permitido |
+| Unidades de red Samba | ✅ Permitido | ✅ Permitido |
+| Aplicaciones de oficina | ✅ Permitido | ✅ Permitido |
+| Cambiar configuración del sistema | ❌ Bloqueado | ✅ Permitido |
+
+### 3.4 Acceso Samba desde Windows 11 Pro
 
 Las credenciales usadas para acceder a Samba son las del servidor Ubuntu (`empleado`, `guia`, etc.), no las cuentas locales de Windows.
 
