@@ -119,7 +119,7 @@ ip a
 9. Esperar a que finalice (15-30 minutos, el equipo reiniciará varias veces)
 
 ![Proceso de instalación de Windows 11 en curso en la VM SantysTours-Admin-01](capturas/Captura%20de%20pantalla%2016.png)
-*Captura 16 — Proceso de instalación de Windows 11 al 12% en la VM SantysTours-Admin-01*
+*Captura 16 — Proceso de instalación de Windows 11 pro al 12% en la VM SantysTours-Admin-01*
 
 ### 3.4 Configuración inicial
 
@@ -129,7 +129,7 @@ ip a
 4. Desactivar el requisito de cuenta Microsoft si se solicita
 
 ![Escritorio de Windows 11 recién instalado en la VM SantysTours-Admin-01](capturas/Captura%20de%20pantalla%2019.png)
-*Captura 19 — Escritorio de Windows 11 en la VM SantysTours-Admin-01 tras completar la instalación*
+*Captura 19 — Escritorio de Windows 11 pro en la VM SantysTours-Admin-01 tras completar la instalación*
 
 ### 3.5 Verificación post-instalación
 
