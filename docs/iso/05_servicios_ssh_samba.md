@@ -5,14 +5,16 @@
 
 ---
 
-## 1. Contexto del entorno de prueba
+> **Nota sobre las evidencias:** Los procedimientos descritos corresponden al entorno de producción real. Las capturas aportadas fueron tomadas en un entorno de laboratorio (AWS Academy + VirtualBox) como evidencia práctica del proyecto intermodular ASIR.
+
+---
+
+## 1. Servicios configurados
 
 | Servicio | Configurado en | Accedido desde |
 |---------|---------------|----------------|
-| SSH | Servidor Ubuntu en AWS Academy (EC2 t3.micro) | Windows 11 Pro (VirtualBox) mediante **PuTTY** + clave `labsuser.ppk` (vockey) |
-| Samba | Servidor Ubuntu en AWS Academy (EC2 t3.micro) | Windows 11 Pro (VirtualBox) mediante el Explorador de archivos |
-
-> En producción real, el acceso SSH y Samba se realizaría desde los equipos físicos Windows 11 Pro de la oficina hacia el servidor en AWS.
+| SSH | Servidor Ubuntu en AWS EC2 | Equipos físicos Windows 11 Pro de la oficina mediante **PuTTY** |
+| Samba | Servidor Ubuntu en AWS EC2 | Equipos físicos Windows 11 Pro mediante el Explorador de archivos |
 
 ---
 
@@ -20,7 +22,12 @@
 
 ### 2.1 ¿Por qué SSH con PuTTY?
 
-PuTTY permite al personal técnico de The Santy's Tours administrar el servidor Ubuntu en AWS Academy de forma remota y segura desde los equipos Windows 11 Pro, sin acceso físico al servidor.
+PuTTY permite al personal técnico de The Santy's Tours administrar el servidor Ubuntu en AWS de forma remota y segura desde los equipos Windows 11 Pro de la oficina, sin necesidad de acceso físico al servidor.
+
+Casos de uso:
+- Administración del servidor desde los equipos de oficina
+- Despliegue y mantenimiento del portal web
+- Gestión de usuarios, permisos y servicios
 
 ### 2.2 Verificar SSH activo en el servidor
 
@@ -31,9 +38,14 @@ sudo systemctl status ssh
 ```
 
 ![systemctl status ssh mostrando el servicio active running](capturas/Captura%20de%20pantalla%2015.png)
-*Captura 15 — ssh.service active (running) — OpenBSD Secure Shell server activo desde el arranque de la instancia*
+*Captura 15 — ssh.service active (running) — OpenBSD Secure Shell server activo*
 
-> **Nota:** Samba (`smbd.service`) no aparece como instalado en esta captura — se configurará en el paso 3 de este documento.
+Si no está activo:
+```bash
+sudo apt install openssh-server -y
+sudo systemctl enable ssh
+sudo systemctl start ssh
+```
 
 ### 2.3 Hardening de la configuración SSH
 
@@ -42,7 +54,6 @@ sudo nano /etc/ssh/sshd_config
 ```
 
 Parámetros a modificar:
-
 ```bash
 # No permitir login directo como root
 PermitRootLogin no
@@ -69,8 +80,6 @@ Banner /etc/ssh/banner.txt
 sudo nano /etc/ssh/banner.txt
 ```
 
-Contenido:
-
 ```
 ************************************************************
 *        THE SANTY'S TOURS — SERVIDOR INTERNO             *
@@ -89,21 +98,18 @@ sudo systemctl restart ssh
 
 ### 2.6 Conexión desde Windows 11 Pro con PuTTY
 
-#### Clave SSH del laboratorio AWS Academy
+#### Clave privada para autenticación SSH
 
-En AWS Academy el par de claves es **vockey**. La clave privada se descarga directamente desde el panel del laboratorio en formato **.ppk** (listo para PuTTY):
-
-1. Panel AWS Academy → **Download PPK** → guardar como `labsuser.ppk` en `C:\Keys\`
+La clave privada se descarga desde la consola AWS al crear la instancia EC2 en formato **.ppk** (listo para PuTTY). Se guarda en cada equipo de administración en `C:\Keys\`.
 
 #### Abrir la sesión guardada en PuTTY
 
-1. Abrir **PuTTY** en la VM Windows 11 Pro
+1. Abrir **PuTTY** en el equipo Windows 11 Pro de la oficina
 2. Seleccionar la sesión guardada `SantysTours-Server`
 3. Clic en **Open**
 4. Primer acceso → aviso de clave del host → **Accept**
 5. **login as:** `ubuntu`
-6. Conexión establecida con `labsuser.ppk` sin contraseña
-7. El banner de The Santy's Tours aparece al conectarse
+6. Conexión establecida — el banner de The Santy's Tours aparece en pantalla
 
 ### 2.7 Verificación del servicio SSH
 
@@ -119,7 +125,7 @@ sudo journalctl -u ssh -n 20
 
 ### 3.1 ¿Por qué Samba?
 
-Samba permite que los equipos **Windows 11 Pro** de la oficina accedan a las carpetas del servidor Ubuntu en AWS Academy como **unidades de red**, directamente desde el Explorador de archivos de Windows.
+Samba permite que los equipos **Windows 11 Pro** de la oficina accedan a las carpetas del servidor Ubuntu como **unidades de red**, directamente desde el Explorador de archivos de Windows sin herramientas adicionales.
 
 ### 3.2 Instalación de Samba
 
@@ -155,7 +161,6 @@ sudo nano /etc/samba/smb.conf
    map to guest = bad user
    usershare allow guests = no
 
-# Carpeta para empleados (lectura/escritura)
 [documentos]
    comment = Documentos The Santy's Tours
    path = /srv/santysTours/documentos
@@ -165,7 +170,6 @@ sudo nano /etc/samba/smb.conf
    create mask = 0660
    directory mask = 0770
 
-# Carpeta de rutas (solo lectura)
 [rutas]
    comment = Rutas y Tours
    path = /srv/santysTours/rutas
@@ -173,7 +177,6 @@ sudo nano /etc/samba/smb.conf
    read only = yes
    browseable = yes
 
-# Carpeta pública
 [publico]
    comment = Información pública
    path = /srv/santysTours/publico
@@ -203,8 +206,7 @@ sudo systemctl status smbd
 
 ### 3.7 Firewall para Samba
 
-El puerto 445 (TCP) está abierto a través del **Security Group** de AWS Academy configurado durante el lanzamiento de la instancia. Adicionalmente en UFW:
-
+El puerto 445 (TCP) está abierto a través del **Security Group** de AWS. Adicionalmente en UFW:
 ```bash
 sudo ufw allow samba
 sudo ufw status | grep -i samba
@@ -216,11 +218,13 @@ sudo ufw status | grep -i samba
 
 ### 4.1 Explorador de archivos
 
-1. Abrir el **Explorador de archivos** en la VM Windows 11 Pro
+1. Abrir el **Explorador de archivos** en el equipo Windows 11 Pro
 2. En la barra de dirección escribir:
 ```
-\\IP_PUBLICA_AWS
+\\thesantystours.com
 ```
+o usando la IP pública del servidor si Route 53 no está configurado.
+
 3. Introducir credenciales Samba: usuario `empleado` / contraseña configurada en el servidor
 4. Se muestran los recursos compartidos: `documentos`, `rutas`, `publico`
 
@@ -237,7 +241,7 @@ sudo ufw status | grep -i samba
 
 | Servicio | Puerto | Estado | Cliente | Función |
 |---------|--------|--------|---------|---------|
-| SSH (OpenSSH) | 22/TCP | ✅ Activo | PuTTY + `labsuser.ppk` (vockey) | Administración remota del servidor |
+| SSH (OpenSSH) | 22/TCP | ✅ Activo | PuTTY con clave privada AWS | Administración remota del servidor |
 | Samba (SMB) | 445/TCP | ✅ Activo | Explorador de Windows | Compartición de carpetas en red |
 | Samba (NetBIOS) | 137–139/UDP | ✅ Activo | Automático | Descubrimiento de red |
 
