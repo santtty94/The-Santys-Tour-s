@@ -22,9 +22,9 @@ No existe servidor físico en la oficina. Toda la lógica de negocio y los datos
 
 | Dispositivo | Cantidad | Conexión | Función |
 |---|---|---|---|
-| Portátil de desarrollo web | 1 | Ethernet / Wi-Fi | Desarrollo y mantenimiento del portal web |
-| Portátil de desarrollo app/BBDD | 1 | Ethernet / Wi-Fi | Desarrollo de app móvil y gestión de base de datos |
-| Portátil de administración | 1 | Ethernet / Wi-Fi | Reservas, atención al cliente, facturación |
+| Portátil de desarrollo web | 1 | Ethernet | Desarrollo y mantenimiento del portal web |
+| Portátil de desarrollo app/BBDD | 1 | Ethernet | Desarrollo de app móvil y gestión de base de datos |
+| Portátil de administración | 1 | Wi-Fi | Reservas, atención al cliente, facturación |
 | Smartphone de trabajo | 3 | Wi-Fi / 5G | Operativa en campo durante las experiencias |
 | Impresora multifunción | 1 | Wi-Fi | Vouchers, tickets, documentación |
 | Router con módem fibra | 1 | — | Acceso a internet y gateway de la red |
@@ -52,16 +52,16 @@ El acceso a internet es crítico: todo el backend, la base de datos y el portal 
 |---|---|---|
 | DHCP | Router de oficina | Asignación automática de IPs a los equipos de la red local |
 | DNS | Router (reenvío) + AWS Route 53 | Resolución de nombres y del dominio thesantystours.com |
-| SSH (puerto 22) | Servidor EC2 en AWS | Acceso remoto seguro al servidor Ubuntu desde los portátiles |
+| SSH (puerto 22) | Servidor EC2 en AWS | Acceso remoto seguro al servidor Ubuntu desde los portátiles de desarrollo |
 | Samba (puerto 445) | Servidor EC2 en AWS | Compartición de carpetas entre el servidor y los clientes Windows |
 | HTTP/HTTPS (puertos 80/443) | AWS (CloudFront + ALB + EC2) | Acceso al portal web y a la API REST |
-| Wi-Fi (802.11ax / Wi-Fi 6) | Access Point de oficina | Conectividad inalámbrica para portátiles, smartphones e impresora |
+| Wi-Fi (802.11ax / Wi-Fi 6) | Access Point de oficina | Conectividad inalámbrica para el portátil de administración, smartphones e impresora |
 
 ---
 
 ## 5. Conclusión
 
-La red de The Santy's Tours es una red local de oficina pequeña (menos de 10 dispositivos) que actúa como puente hacia la infraestructura cloud en AWS. Los requisitos principales son conexión a internet estable, cobertura Wi-Fi completa en la oficina y acceso seguro al servidor remoto EC2 mediante SSH y Samba.
+La red de The Santy's Tours es una red local de oficina pequeña (menos de 10 dispositivos) que actúa como puente hacia la infraestructura cloud en AWS. Los portátiles de desarrollo se conectan por Ethernet para garantizar la máxima estabilidad en tareas de desarrollo y acceso SSH al servidor EC2. El portátil de administración, los smartphones y la impresora utilizan Wi-Fi a través del Access Point. El requisito principal es disponer de conexión a internet estable y cobertura inalámbrica completa en la oficina.
 
 ---
 
