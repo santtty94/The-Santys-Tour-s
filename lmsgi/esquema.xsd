@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- ============================================================ -->
+  <!-- Esquema XSD — The Santy's Tours                              -->
+  <!-- Valida: catalogo-reservas.xml                                -->
+  <!-- BBDD de referencia: santys_tours (MySQL 8.x / AWS RDS)       -->
+  <!-- Módulo: LMSGI (0373) — Proyecto Intermodular ASIR 2025/2026  -->
+  <!-- ============================================================ -->
+
+  <!-- ==================== TIPOS SIMPLES ========================= -->
+
+  <!-- Categorías de tour (ENUM de la tabla tours) -->
+  <xs:simpleType name="TipoCategoria">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="tour"/>
+      <xs:enumeration value="experiencia"/>
+      <xs:enumeration value="excursion"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Idiomas disponibles (ENUM de la tabla tours) -->
+  <xs:simpleType name="TipoIdioma">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="es"/>
+      <xs:enumeration value="en"/>
+      <xs:enumeration value="es/en"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Estado de la sesión (ENUM de la tabla sesiones_tour) -->
+  <xs:simpleType name="TipoEstadoSesion">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="programada"/>
+      <xs:enumeration value="completada"/>
+      <xs:enumeration value="cancelada"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Estado de la reserva (ENUM de la tabla reservas) -->
+  <xs:simpleType name="TipoEstadoReserva">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="pendiente"/>
+      <xs:enumeration value="confirmada"/>
+      <xs:enumeration value="cancelada"/>
+      <xs:enumeration value="completada"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Método de pago (ENUM de la tabla pagos) — pago presencial -->
+  <xs:simpleType name="TipoMetodoPago">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="efectivo"/>
+      <xs:enumeration value="tarjeta"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Estado del pago (ENUM de la tabla pagos) -->
+  <xs:simpleType name="TipoEstadoPago">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="pendiente"/>
+      <xs:enumeration value="pagado"/>
+      <xs:enumeration value="reembolsado"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Precio: decimal positivo, máx 8 dígitos con 2 decimales (DECIMAL(8,2)) -->
+  <xs:simpleType name="TipoPrecio">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0.01"/>
+      <xs:totalDigits value="8"/>
+      <xs:fractionDigits value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Email con patrón básico -->
+  <xs:simpleType name="TipoEmail">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"/>
+      <xs:minLength value="5"/>
+      <xs:maxLength value="150"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Nombre/Apellidos: entre 2 y 150 caracteres -->
+  <xs:simpleType name="TipoNombre">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="2"/>
+      <xs:maxLength value="150"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Número de plazas: entero positivo mínimo 0 (sesiones sin reservas) -->
+  <xs:simpleType name="TipoPlazas">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Duración en minutos: entre 30 y 1440 minutos (media hora a un día) -->
+  <xs:simpleType name="TipoDuracion">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="30"/>
+      <xs:maxInclusive value="1440"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ID numérico positivo -->
+  <xs:simpleType name="TipoID">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Versión del sistema: patrón x.y -->
+  <xs:simpleType name="TipoVersion">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d+\.\d+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ==================== TIPOS COMPLEJOS ======================= -->
+
+  <!-- Empresa -->
+  <xs:complexType name="TipoEmpresa">
+    <xs:sequence>
+      <xs:element name="nombre" type="TipoNombre"/>
+      <xs:element name="sede" type="xs:string"/>
+      <xs:element name="dominio" type="xs:string"/>
+      <xs:element name="contacto" type="TipoEmail"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Guía asignado a la sesión -->
+  <xs:complexType name="TipoGuia">
+    <xs:sequence>
+      <xs:element name="nombre" type="TipoNombre"/>
+      <xs:element name="apellidos" type="TipoNombre"/>
+      <xs:element name="especialidad" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Cliente que realiza la reserva -->
+  <xs:complexType name="TipoCliente">
+    <xs:sequence>
+      <xs:element name="nombre" type="TipoNombre"/>
+      <xs:element name="apellidos" type="TipoNombre"/>
+      <xs:element name="email" type="TipoEmail"/>
+      <xs:element name="pais_origen" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Pago asociado a una reserva (presencial: efectivo o tarjeta) -->
+  <xs:complexType name="TipoPago">
+    <xs:sequence>
+      <xs:element name="metodo" type="TipoMetodoPago"/>
+      <xs:element name="importe" type="TipoPrecio"/>
+      <xs:element name="estado_pago" type="TipoEstadoPago"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Reserva individual -->
+  <xs:complexType name="TipoReserva">
+    <xs:sequence>
+      <xs:element name="cliente" type="TipoCliente"/>
+      <xs:element name="num_plazas">
+        <xs:simpleType>
+          <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="20"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="precio_total" type="TipoPrecio"/>
+      <xs:element name="estado" type="TipoEstadoReserva"/>
+      <xs:element name="fecha_reserva" type="xs:dateTime"/>
+      <xs:element name="pago" type="TipoPago"/>
+    </xs:sequence>
+    <xs:attribute name="id_reserva" type="TipoID" use="required"/>
+  </xs:complexType>
+
+  <!-- Lista de reservas de una sesión -->
+  <xs:complexType name="TipoReservas">
+    <xs:sequence>
+      <xs:element name="reserva" type="TipoReserva" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="total_reservas" type="xs:nonNegativeInteger" use="required"/>
+  </xs:complexType>
+
+  <!-- Sesión concreta de un tour -->
+  <xs:complexType name="TipoSesion">
+    <xs:sequence>
+      <xs:element name="fecha_hora" type="xs:dateTime"/>
+      <xs:element name="guia" type="TipoGuia"/>
+      <xs:element name="capacidad_maxima" type="TipoPlazas"/>
+      <xs:element name="plazas_disponibles" type="TipoPlazas"/>
+      <xs:element name="estado" type="TipoEstadoSesion"/>
+      <xs:element name="reservas" type="TipoReservas"/>
+    </xs:sequence>
+    <xs:attribute name="id_sesion" type="TipoID" use="required"/>
+  </xs:complexType>
+
+  <!-- Lista de sesiones de un tour -->
+  <xs:complexType name="TipoSesiones">
+    <xs:sequence>
+      <!-- Mínimo 1 sesión por tour, máximo 52 (una por semana durante un año) -->
+      <xs:element name="sesion" type="TipoSesion" minOccurs="1" maxOccurs="52"/>
+    </xs:sequence>
+    <xs:attribute name="total_sesiones" type="xs:positiveInteger" use="required"/>
+  </xs:complexType>
+
+  <!-- Tour del catálogo -->
+  <xs:complexType name="TipoTour">
+    <xs:sequence>
+      <xs:element name="nombre">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="5"/>
+            <xs:maxLength value="200"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="descripcion" type="xs:string"/>
+      <xs:element name="categoria" type="TipoCategoria"/>
+      <xs:element name="ubicacion" type="xs:string"/>
+      <xs:element name="duracion_minutos" type="TipoDuracion"/>
+      <xs:element name="precio_persona" type="TipoPrecio"/>
+      <xs:element name="idioma" type="TipoIdioma"/>
+      <xs:element name="sesiones" type="TipoSesiones"/>
+    </xs:sequence>
+    <xs:attribute name="id_tour" type="TipoID" use="required"/>
+    <xs:attribute name="activo" type="xs:boolean" use="required"/>
+  </xs:complexType>
+
+  <!-- Lista de tours -->
+  <xs:complexType name="TipoTours">
+    <xs:sequence>
+      <!-- Mínimo 1 tour, máximo 500 -->
+      <xs:element name="tour" type="TipoTour" minOccurs="1" maxOccurs="500"/>
+    </xs:sequence>
+    <xs:attribute name="total" type="xs:positiveInteger" use="required"/>
+  </xs:complexType>
+
+  <!-- ==================== ELEMENTO RAÍZ ========================= -->
+
+  <xs:element name="exportacion">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="empresa" type="TipoEmpresa"/>
+        <xs:element name="tours" type="TipoTours"/>
+      </xs:sequence>
+      <!-- Metadatos de la exportación -->
+      <xs:attribute name="sistema" type="xs:string" use="required"/>
+      <xs:attribute name="version" type="TipoVersion" use="required"/>
+      <xs:attribute name="fecha_exportacion" type="xs:date" use="required"/>
+      <xs:attribute name="base_datos" type="xs:string" use="required"/>
+      <xs:attribute name="entorno">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="produccion"/>
+            <xs:enumeration value="desarrollo"/>
+            <xs:enumeration value="pruebas"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
