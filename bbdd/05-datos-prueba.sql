@@ -69,37 +69,74 @@ INSERT INTO tours (nombre, descripcion, duracion_min, precio_persona, categoria,
  150, 25.00, 'tour', 'Gràcia / Parque Güell, Barcelona', 'es/en', 1);
 
 -- =============================================================
--- SESIONES DE TOUR (12 registros)
+-- SESIONES DE TOUR (12 registros — tours repetidos en distintas fechas)
+-- Nota: plazas_disponibles = capacidad_maxima - plazas reservadas en este script
 -- =============================================================
 INSERT INTO sesiones_tour (id_tour, id_guia, fecha_hora, capacidad_maxima, plazas_disponibles, estado) VALUES
-(1, 1, '2025-06-02 10:00:00', 15, 0,  'completada'),
-(1, 1, '2025-06-09 10:00:00', 15, 3,  'completada'),
-(1, 5, '2025-06-16 10:00:00', 15, 8,  'programada'),
+-- Tour Eixample modernista (id_tour=1): 4 sesiones
+-- Sesión 1: 2+3+2=7 plazas reservadas, disponibles=8
+(1, 1, '2025-06-02 10:00:00', 15, 8,  'completada'),
+-- Sesión 2: sin reservas en este dataset, disponibles=15
+(1, 1, '2025-06-09 10:00:00', 15, 15, 'completada'),
+-- Sesión 3: programada, sin reservas aún
+(1, 5, '2025-06-16 10:00:00', 15, 15, 'programada'),
+-- Sesión 4: programada, sin reservas aún
 (1, 1, '2025-06-23 10:00:00', 15, 15, 'programada'),
-(2, 5, '2025-06-03 17:00:00', 12, 0,  'completada'),
-(2, 5, '2025-06-10 17:00:00', 12, 4,  'programada'),
-(3, 4, '2025-06-06 21:00:00', 20, 0,  'completada'),
-(3, 4, '2025-06-13 21:00:00', 20, 5,  'programada'),
-(4, 3, '2025-06-07 08:30:00', 25, 0,  'completada'),
-(4, 3, '2025-06-14 08:30:00', 25, 10, 'programada'),
-(5, 2, '2025-06-05 10:00:00', 10, 0,  'completada'),
-(8, 5, '2025-06-04 18:30:00', 15, 0,  'completada');
+
+-- Barrio Gótico (id_tour=2): 2 sesiones
+-- Sesión 5: 2+4=6 plazas reservadas, disponibles=6
+(2, 5, '2025-06-03 17:00:00', 12, 6,  'completada'),
+-- Sesión 6: 2 plazas reservadas (confirmada), disponibles=10
+(2, 5, '2025-06-10 17:00:00', 12, 10, 'programada'),
+
+-- Experiencia flamenca (id_tour=3): 2 sesiones
+-- Sesión 7: 2+3=5 plazas reservadas, disponibles=15
+(3, 4, '2025-06-06 21:00:00', 20, 15, 'completada'),
+-- Sesión 8: programada, sin reservas aún
+(3, 4, '2025-06-13 21:00:00', 20, 20, 'programada'),
+
+-- Excursión Montserrat (id_tour=4): 2 sesiones
+-- Sesión 9: 4+2=6 plazas reservadas, disponibles=19
+(4, 3, '2025-06-07 08:30:00', 25, 19, 'completada'),
+-- Sesión 10: programada, sin reservas aún
+(4, 3, '2025-06-14 08:30:00', 25, 25, 'programada'),
+
+-- Mercado de La Boqueria + taller de cocina (id_tour=5): 1 sesión
+-- Sesión 11: 2 plazas reservadas, disponibles=8
+(5, 2, '2025-06-05 10:00:00', 10, 8,  'completada'),
+
+-- Gràcia y Parque Güell (id_tour=8): 1 sesión
+-- Sesión 12: 2 plazas reservadas, disponibles=13
+(8, 5, '2025-06-04 18:30:00', 15, 13, 'completada');
 
 -- =============================================================
 -- RESERVAS (12 registros)
 -- =============================================================
 INSERT INTO reservas (id_usuario, id_sesion, num_plazas, precio_total, estado, created_at) VALUES
+-- Sesión 1 (Eixample modernista, completada)
 (2, 1, 2, 58.00,  'completada', '2025-05-20 10:30:00'),
 (3, 1, 3, 87.00,  'completada', '2025-05-21 14:00:00'),
 (4, 1, 2, 58.00,  'completada', '2025-05-22 09:15:00'),
+
+-- Sesión 5 (Gótico, completada)
 (5, 5, 2, 44.00,  'completada', '2025-05-25 11:00:00'),
 (6, 5, 4, 88.00,  'completada', '2025-05-26 16:30:00'),
+
+-- Sesión 7 (flamenco, completada)
 (7, 7, 2, 130.00, 'completada', '2025-05-28 12:00:00'),
 (8, 7, 3, 195.00, 'completada', '2025-05-29 18:45:00'),
+
+-- Sesión 9 (Montserrat, completada)
 (9, 9, 4, 300.00, 'completada', '2025-05-30 08:00:00'),
 (10, 9, 2, 150.00,'completada', '2025-05-31 10:00:00'),
+
+-- Sesión 11 (cocina, completada)
 (2, 11, 2, 178.00,'completada', '2025-05-15 14:00:00'),
+
+-- Sesión 12 (Gràcia, completada)
 (3, 12, 2, 50.00, 'completada', '2025-05-18 17:00:00'),
+
+-- Sesión 6 (Gótico, programada — reserva confirmada)
 (4, 6, 2, 44.00,  'confirmada', '2025-06-01 09:00:00');
 
 -- =============================================================
@@ -120,7 +157,7 @@ INSERT INTO pagos (id_reserva, metodo_pago, importe, estado, fecha_pago) VALUES
 (12, 'efectivo', 44.00,  'pendiente', NULL);
 
 -- =============================================================
--- VALORACIONES (8 registros)
+-- VALORACIONES (8 registros — solo clientes con reserva completada en el tour)
 -- =============================================================
 INSERT INTO valoraciones (id_usuario, id_tour, puntuacion, comentario, fecha) VALUES
 (2, 1, 5, 'Una experiencia increíble. Marc nos explicó cada detalle con una pasión contagiosa. Sin duda el mejor tour de Barcelona.', '2025-06-03 09:00:00'),
