@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exportacion
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="esquema.xsd"
+  sistema="The Santy's Tours"
+  version="1.0"
+  fecha_exportacion="2026-04-26"
+  base_datos="santys_tours"
+  entorno="produccion">
+
+  <!-- ============================================================ -->
+  <!-- ARCHIVO DE PRUEBA DE ERRORES — Este XML NO valida            -->
+  <!-- Demuestra que el XSD controla restricciones reales           -->
+  <!-- ============================================================ -->
+
+  <empresa>
+    <nombre>The Santy's Tours</nombre>
+    <sede>Barcelona, España</sede>
+    <dominio>thesantystours.com</dominio>
+    <contacto>info@thesantystours.com</contacto>
+  </empresa>
+
+  <tours total="1">
+
+    <tour id_tour="1" activo="true">
+      <nombre>Tour a pie por el Barrio Gótico</nombre>
+      <descripcion>Recorrido por el Barrio Gótico.</descripcion>
+
+      <!-- ERROR 1: categoría "visita" no existe en el ENUM -->
+      <!-- Valores válidos: tour | experiencia | excursion   -->
+      <categoria>visita</categoria>
+
+      <ubicacion>Barrio Gótico, Barcelona</ubicacion>
+
+      <!-- ERROR 2: duración de 20 minutos, mínimo permitido es 30 -->
+      <duracion_minutos>20</duracion_minutos>
+
+      <!-- ERROR 3: precio negativo, mínimo permitido es 0.01 -->
+      <precio_persona>-5.00</precio_persona>
+
+      <idioma>es/en</idioma>
+
+      <sesiones total_sesiones="1">
+        <sesion id_sesion="1">
+          <fecha_hora>2026-05-10T10:00:00</fecha_hora>
+          <guia>
+            <nombre>Marc</nombre>
+            <apellidos>Ferrer Puig</apellidos>
+            <especialidad>Historia medieval de Barcelona</especialidad>
+          </guia>
+          <capacidad_maxima>15</capacidad_maxima>
+          <plazas_disponibles>10</plazas_disponibles>
+          <estado>programada</estado>
+          <reservas total_reservas="1">
+            <reserva id_reserva="1">
+              <cliente>
+                <nombre>James</nombre>
+                <apellidos>Wilson</apellidos>
+                <!-- ERROR 4: email sin formato válido (falta @) -->
+                <email>james.wilson.email.co.uk</email>
+                <pais_origen>Reino Unido</pais_origen>
+              </cliente>
+              <!-- ERROR 5: num_plazas = 0, mínimo permitido es 1 -->
+              <num_plazas>0</num_plazas>
+              <precio_total>36.00</precio_total>
+              <!-- ERROR 6: estado "en_espera" no existe en el ENUM -->
+              <!-- Valores válidos: pendiente | confirmada | cancelada | completada -->
+              <estado>en_espera</estado>
+              <fecha_reserva>2026-04-15T09:22:00</fecha_reserva>
+              <pago>
+                <!-- ERROR 7: método "bizum" no existe en el ENUM -->
+                <!-- Valores válidos: efectivo | tarjeta             -->
+                <metodo>bizum</metodo>
+                <importe>36.00</importe>
+                <estado_pago>pendiente</estado_pago>
+              </pago>
+            </reserva>
+          </reservas>
+        </sesion>
+      </sesiones>
+    </tour>
+
+  </tours>
+
+</exportacion>
