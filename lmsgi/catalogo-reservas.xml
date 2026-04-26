@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exportacion
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="esquema.xsd"
+  sistema="The Santy's Tours"
+  version="1.0"
+  fecha_exportacion="2026-04-26"
+  base_datos="santys_tours"
+  entorno="produccion">
+
+  <!-- Exportación del catálogo de tours y reservas activas -->
+  <!-- Generada desde el sistema de gestión de The Santy's Tours -->
+  <!-- Sede: Barcelona | Dominio: thesantystours.com -->
+
+  <empresa>
+    <nombre>The Santy&apos;s Tours</nombre>
+    <sede>Barcelona, España</sede>
+    <dominio>thesantystours.com</dominio>
+    <contacto>info@thesantystours.com</contacto>
+  </empresa>
+
+  <tours total="8">
+
+    <tour id_tour="1" activo="true">
+      <nombre>Tour a pie por el Barrio Gótico</nombre>
+      <descripcion>Recorrido guiado por las calles medievales del Barrio Gótico de Barcelona, con paradas en la Catedral, el Pont del Bisbe y la Plaça Reial.</descripcion>
+      <categoria>tour</categoria>
+      <ubicacion>Barrio Gótico, Barcelona</ubicacion>
+      <duracion_minutos>120</duracion_minutos>
+      <precio_persona>18.00</precio_persona>
+      <idioma>es/en</idioma>
+      <sesiones total_sesiones="2">
+
+        <sesion id_sesion="1">
+          <fecha_hora>2026-05-10T10:00:00</fecha_hora>
+          <guia>
+            <nombre>Marc</nombre>
+            <apellidos>Ferrer Puig</apellidos>
+            <especialidad>Historia medieval de Barcelona</especialidad>
+          </guia>
+          <capacidad_maxima>15</capacidad_maxima>
+          <plazas_disponibles>8</plazas_disponibles>
+          <estado>programada</estado>
+          <reservas total_reservas="2">
+            <reserva id_reserva="1">
+              <cliente>
+                <nombre>James</nombre>
+                <apellidos>Wilson</apellidos>
+                <email>james.wilson@email.co.uk</email>
+                <pais_origen>Reino Unido</pais_origen>
+              </cliente>
+              <num_plazas>2</num_plazas>
+              <precio_total>36.00</precio_total>
+              <estado>confirmada</estado>
+              <fecha_reserva>2026-04-15T09:22:00</fecha_reserva>
+              <pago>
+                <metodo>tarjeta</metodo>
+                <importe>36.00</importe>
+                <estado_pago>pendiente</estado_pago>
+              </pago>
+            </reserva>
+            <reserva id_reserva="2">
+              <cliente>
+                <nombre>Sophie</nombre>
+                <apellidos>Dupont</apellidos>
+                <email>sophie.dupont@mail.fr</email>
+                <pais_origen>Francia</pais_origen>
+              </cliente>
+              <num_plazas>3</num_plazas>
+              <precio_total>54.00</precio_total>
+              <estado>confirmada</estado>
+              <fecha_reserva>2026-04-16T14:05:00</fecha_reserva>
+              <pago>
+                <metodo>efectivo</metodo>
+                <importe>54.00</importe>
+                <estado_pago>pendiente</estado_pago>
+              </pago>
+            </reserva>
+          </reservas>
+        </sesion>
+
+        <sesion id_sesion="2">
+          <fecha_hora>2026-05-12T16:00:00</fecha_hora>
+          <guia>
+            <nombre>Laura</nombre>
+            <apellidos>Sánchez Vidal</apellidos>
+            <especialidad>Turismo cultural y gastronomía</especialidad>
+          </guia>
+          <capacidad_maxima>15</capacidad_maxima>
+          <plazas_disponibles>11</plazas_disponibles>
+          <estado>programada</estado>
+          <reservas total_reservas="1">
+            <reserva id_reserva="3">
+              <cliente>
+                <nombre>Klaus</nombre>
+                <apellidos>Bauer</apellidos>
+                <email>k.bauer@web.de</email>
+                <pais_origen>Alemania</pais_origen>
+              </cliente>
+              <num_plazas>4</num_plazas>
+              <precio_total>72.00</precio_total>
+              <estado>confirmada</estado>
+              <fecha_reserva>2026-04-18T11:30:00</fecha_reserva>
+              <pago>
+                <metodo>tarjeta</metodo>
+                <importe>72.00</importe>
+                <estado_pago>pendiente</estado_pago>
+              </pago>
+            </reserva>
+          </reservas>
+        </sesion>
+
+      </sesiones>
+    </tour>
+
+    <tour id_tour="2" activo="true">
+      <nombre>Experiencia Flamenco en el Tablao</nombre>
+      <descripcion>Noche de flamenco auténtico en uno de los tablaos más reconocidos de Barcelona, con cena opcional y explicación de la historia del flamenco.</descripcion>
+      <categoria>experiencia</categoria>
+      <ubicacion>El Raval, Barcelona</ubicacion>
+      <duracion_minutos>90</duracion_minutos>
+      <precio_persona>45.00</precio_persona>
+      <idioma>es/en</idioma>
+      <sesiones total_sesiones="1">
+
+        <sesion id_sesion="3">
+          <fecha_hora>2026-05-15T20:00:00</fecha_hora>
+          <guia>
+            <nombre>Laura</nombre>
+            <apellidos>Sánchez Vidal</apellidos>
+            <especialidad>Turismo cultural y gastronomía</especialidad>
+          </guia>
+          <capacidad_maxima>20</capacidad_maxima>
+          <plazas_disponibles>14</plazas_disponibles>
+          <estado>programada</estado>
+          <reservas total_reservas="2">
+            <reserva id_reserva="4">
+              <cliente>
+                <nombre>Giulia</nombre>
+                <apellidos>Rossi</apellidos>
+                <email>giulia.rossi@gmail.it</email>
+                <pais_origen>Italia</pais_origen>
+              </cliente>
+              <num_plazas>2</num_plazas>
+              <precio_total>90.00</precio_total>
+              <estado>confirmada</estado>
+              <fecha_reserva>2026-04-20T10:15:00</fecha_reserva>
+              <pago>
+                <metodo>tarjeta</metodo>
+                <importe>90.00</importe>
+                <estado_pago>pendiente</estado_pago>
+              </pago>
+            </reserva>
+            <reserva id_reserva="5">
+              <cliente>
+                <nombre>Yuki</nombre>
+                <apellidos>Tanaka</apellidos>
+                <email>yuki.tanaka@mail.jp</email>
+                <pais_origen>Japón</pais_origen>
+              </cliente>
+              <num_plazas>4</num_plazas>
+              <precio_total>180.00</precio_total>
+              <estado>confirmada</estado>
+              <fecha_reserva>2026-04-21T08:45:00</fecha_reserva>
+              <pago>
+                <metodo>efectivo</metodo>
+                <importe>180.00</importe>
+                <estado_pago>pendiente</estado_pago>
+              </pago>
+            </reserva>
+          </reservas>
+        </sesion>
+
+      </sesiones>
+    </tour>
+
+    <tour id_tour="3" activo="true">
+      <nombre>Excursión a Montserrat</nombre>
+      <descripcion>Excursión de día completo a la montaña de Montserrat, con visita al monasterio, sendero de Sant Joan y tiempo libre para explorar.</descripcion>
+      <categoria>excursion</categoria>
+      <ubicacion>Montserrat, Barcelona</ubicacion>
+      <duracion_minutos>480</duracion_minutos>
+      <precio_persona>55.00</precio_persona>
+      <idioma>es/en</idioma>
+      <sesiones total_sesiones="2">
+
+        <sesion id_sesion="4">
+          <fecha_hora>2026-05-17T08:00:00</fecha_hora>
+          <guia>
+            <nombre>Marc</nombre>
+            <apellidos>Ferrer Puig</apellidos>
+            <especialidad>Historia medieval de Barcelona</especialidad>
+          </guia>
+          <capacidad_maxima>12</capacidad_maxima>
+          <plazas_disponibles>5</plazas_disponibles>
+          <estado>programada</estado>
+          <reservas total_reservas="2">
+            <reserva id_reserva="6">
+              <cliente>
+                <nombre>Amina</nombre>
+                <apellidos>El Fassi</apellidos>
+                <email>amina.elfassi@gmail.ma</email>
+                <pais_origen>Marruecos</pais_origen>
+              </cliente>
+              <num_plazas>3</num_plazas>
+              <precio_total>165.00</precio_total>
+              <estado>confirmada</estado>
+              <fecha_reserva>2026-04-22T16:00:00</fecha_reserva>
+              <pago>
+                <metodo>tarjeta</metodo>
+                <importe>165.00</importe>
+                <estado_pago>pendiente</estado_pago>
+              </pago>
+            </reserva>
+            <reserva id_reserva="7">
+              <cliente>
+                <nombre>James</nombre>
+                <apellidos>Wilson</apellidos>
+                <email>james.wilson@email.co.uk</email>
+                <pais_origen>Reino Unido</pais_origen>
+              </cliente>
+              <num_plazas>4</num_plazas>
+              <precio_total>220.00</precio_total>
+              <estado>confirmada</estado>
+              <fecha_reserva>2026-04-23T09:10:00</fecha_reserva>
+              <pago>
+                <metodo>efectivo</metodo>
+                <importe>220.00</importe>
+                <estado_pago>pendiente</estado_pago>
+              </pago>
+            </reserva>
+          </reservas>
+        </sesion>
+
+        <sesion id_sesion="5">
+          <fecha_hora>2026-05-24T08:00:00</fecha_hora>
+          <guia>
+            <nombre>Nuria</nombre>
+            <apellidos>Molina Camps</apellidos>
+            <especialidad>Naturaleza y senderismo</especialidad>
+          </guia>
+          <capacidad_maxima>12</capacidad_maxima>
+          <plazas_disponibles>12</plazas_disponibles>
+          <estado>programada</estado>
+          <reservas total_reservas="0">
+          </reservas>
+        </sesion>
+
+      </sesiones>
+    </tour>
+
+    <tour id_tour="4" activo="true">
+      <nombre>Ruta Gastronómica por el Born</nombre>
+      <descripcion>Tour gastronómico por el barrio del Born: mercado de Santa Caterina, tapas en bares tradicionales y degustación de vinos catalanes.</descripcion>
+      <categoria>experiencia</categoria>
+      <ubicacion>El Born, Barcelona</ubicacion>
+      <duracion_minutos>150</duracion_minutos>
+      <precio_persona>35.00</precio_persona>
+      <idioma>es/en</idioma>
+      <sesiones total_sesiones="1">
+
+        <sesion id_sesion="6">
+          <fecha_hora>2026-05-20T12:00:00</fecha_hora>
+          <guia>
+            <nombre>Laura</nombre>
+            <apellidos>Sánchez Vidal</apellidos>
+            <especialidad>Turismo cultural y gastronomía</especialidad>
+          </guia>
+          <capacidad_maxima>10</capacidad_maxima>
+          <plazas_disponibles>7</plazas_disponibles>
+          <estado>programada</estado>
+          <reservas total_reservas="1">
+            <reserva id_reserva="8">
+              <cliente>
+                <nombre>Sophie</nombre>
+                <apellidos>Dupont</apellidos>
+                <email>sophie.dupont@mail.fr</email>
+                <pais_origen>Francia</pais_origen>
+              </cliente>
+              <num_plazas>3</num_plazas>
+              <precio_total>105.00</precio_total>
+              <estado>pendiente</estado>
+              <fecha_reserva>2026-04-25T15:30:00</fecha_reserva>
+              <pago>
+                <metodo>efectivo</metodo>
+                <importe>105.00</importe>
+                <estado_pago>pendiente</estado_pago>
+              </pago>
+            </reserva>
+          </reservas>
+        </sesion>
+
+      </sesiones>
+    </tour>
+
+  </tours>
+
+</exportacion>
