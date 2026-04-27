@@ -12,7 +12,9 @@
 | `catalogo-reservas.xml` | Exportación del catálogo de tours y reservas activas |
 | `esquema.xsd` | Esquema XSD que valida el XML |
 | `catalogo-error.xml` | XML con errores intencionados (demuestra que el XSD controla) |
-| `docs/validacion.md` | Evidencia de validación correcta e incorrecta |
+| `docs/validacion.md` | Evidencia de validación con pantallazos de VS Code |
+| `docs/Catalogo-reservas.xml.png` | Pantallazo: XML correcto — 0 errores en VS Code |
+| `docs/Catalago-error.xml.png` | Pantallazo: XML con errores — 14 problemas detectados |
 
 ---
 
@@ -44,12 +46,20 @@ exportacion
 
 ## ✅ Cómo se valida
 
-El archivo `esquema.xsd` valida `catalogo-reservas.xml` comprobando:
+La validación se realiza con **VS Code** usando la extensión **XML de Red Hat**, que valida automáticamente el XML contra el XSD referenciado en la cabecera del archivo.
 
-### Tipos de datos
+### Herramienta utilizada
+
+- **Editor:** Visual Studio Code
+- **Extensión:** XML (Red Hat)
+- **Evidencia:** pantallazos en `docs/`
+
+### El archivo `esquema.xsd` valida comprobando:
+
+**Tipos de datos**
 - `xs:string`, `xs:integer`, `xs:decimal`, `xs:boolean`, `xs:date`, `xs:dateTime`
 
-### Enumeraciones (extraídas directamente de los ENUMs de la BBDD `santys_tours`)
+**Enumeraciones** (extraídas directamente de los ENUMs de la BBDD `santys_tours`)
 - **Categoría de tour:** `tour` | `experiencia` | `excursion`
 - **Idioma:** `es` | `en` | `es/en`
 - **Estado sesión:** `programada` | `completada` | `cancelada`
@@ -58,28 +68,24 @@ El archivo `esquema.xsd` valida `catalogo-reservas.xml` comprobando:
 - **Estado pago:** `pendiente` | `pagado` | `reembolsado`
 - **Entorno sistema:** `produccion` | `desarrollo` | `pruebas`
 
-### Restricciones de valor
+**Restricciones de valor**
 - Precio mínimo: `0.01` (no puede ser negativo ni cero)
 - Duración mínima: `30 minutos` — máxima: `1440 minutos`
 - Plazas por reserva: entre `1` y `20`
 - Email: patrón regex `[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}`
 - Nombres: entre 2 y 150 caracteres
 
-### Cardinalidades
-- Un tour debe tener **entre 1 y 52 sesiones** (mínimo 1, máximo una por semana al año)
-- Una sesión puede tener **0 o más reservas** (puede estar sin reservas aún)
+**Cardinalidades**
+- Un tour debe tener **entre 1 y 52 sesiones**
+- Una sesión puede tener **0 o más reservas**
 - El catálogo debe incluir **al menos 1 tour**
 
-### Validación con lxml (equivalente a xmllint)
+### Resultado de la validación
 
-```python
-from lxml import etree
-
-schema = etree.XMLSchema(etree.parse('esquema.xsd'))
-xml    = etree.parse('catalogo-reservas.xml')
-
-print(schema.validate(xml))  # → True ✅
-```
+| Archivo | Resultado |
+|---------|-----------|
+| `catalogo-reservas.xml` | ✅ **0 errores** — "No se ha detectado ningún problema en el área de trabajo" |
+| `catalogo-error.xml` | ❌ **14 errores** detectados — el XSD rechaza los datos incorrectos |
 
 ---
 
