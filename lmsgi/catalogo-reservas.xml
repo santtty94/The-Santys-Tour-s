@@ -39,7 +39,7 @@
             <especialidad>Historia medieval de Barcelona</especialidad>
           </guia>
           <capacidad_maxima>15</capacidad_maxima>
-          <plazas_disponibles>8</plazas_disponibles>
+          <plazas_disponibles>10</plazas_disponibles>
           <estado>programada</estado>
           <reservas total_reservas="2">
             <reserva id_reserva="1">
