@@ -19,7 +19,7 @@
     <contacto>info@thesantystours.com</contacto>
   </empresa>
 
-  <tours total="8">
+  <tours total="4">
 
     <tour id_tour="1" activo="true">
       <nombre>Tour a pie por el Barrio Gótico</nombre>
