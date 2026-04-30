@@ -115,7 +115,7 @@ Las claves primarias se indican con **PK** y las foráneas con *FK*.
 
 La base de datos cumple la **Tercera Forma Normal (3FN)**:
 
-- **1FN**: todos los campos son atómicos, no hay grupos repetitivos.
+- **1FN**: todos los campos son atómicos, no hay grupos repetitivos, excepto el campo idiomas en la tabla guias, se deja desnormalizado a voluntad ya que no requieren consultas al respecto, es un atributo meramente informativo.
 - **2FN**: todos los atributos no clave dependen completamente de la clave primaria (todas las tablas tienen PK simple).
 - **3FN**: no existen dependencias transitivas. Cada atributo no clave depende únicamente de la PK, no de otro atributo no clave.
 
